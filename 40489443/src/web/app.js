@@ -39,15 +39,6 @@ app.use(
 
 
 
-// 🔹 Test route
-app.get("/", (req, res) => {
-  res.send("HEdClass Web App is running 🚀");
-});
-
-// 🔹 Example dashboard route
-app.get("/dashboard", (req, res) => {
-  res.render("dashboard", { user: "Test User" });
-});
 
 
 

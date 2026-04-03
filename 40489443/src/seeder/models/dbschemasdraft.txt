@@ -1,0 +1,110 @@
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE, *no spaces*
+    password_hash VARCHAR(255) NOT NULL,
+    role ENUM('academic_admin','institutional_admin') NOT NULL,
+    first_name VARCHAR(150) NOT NULL,
+    last_name VARCHAR(150) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE, *specific format*
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE programmes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(400) NOT NULL UNIQUE,
+    degree_type ENUM('BSc','BA','LLB','BEng') NOT NULL,
+    school ENUM('EEECS','Law','Arts') NOT NULL,
+    y2_weight DECIMAL(3,2) NOT NULL DEFAULT 0.30, *between 0 and 1*
+    y3_weight DECIMAL(3,2) NOT NULL DEFAULT 0.70, *between 0 and 1*
+    resit_cap INT NOT NULL DEFAULT 40, *between 0 and 100*
+    active BOOLEAN DEFAULT TRUE,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_programmes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    programme_id INT NOT NULL,
+    assigned_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    active BOOLEAN DEFAULT TRUE,
+    UNIQUE (user_id, programme_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (programme_id) REFERENCES programmes(id)
+);
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_number VARCHAR(50) NOT NULL UNIQUE, *no spaces*
+    first_name VARCHAR(150) NOT NULL, 
+    last_name VARCHAR(150) NOT NULL,
+    dob DATE NOT NULL,
+    programme_id INT NOT NULL,
+    enrolled_date DATE NOT NULL DEFAULT (CURRENT_DATE),
+    graduation_year YEAR NOT NULL,
+    active_student BOOLEAN DEFAULT TRUE,
+    created_by INT NOT NULL,
+    FOREIGN KEY (programme_id) REFERENCES programmes(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+CREATE TABLE modules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(400) NOT NULL,
+    module_code VARCHAR(25) NOT NULL UNIQUE, *no spaces*
+    active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE programme_modules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    programme_id INT NOT NULL,
+    module_id INT NOT NULL,
+    year_level INT NOT NULL CHECK (year_level IN (1, 2, 3)),
+    mandatory BOOLEAN DEFAULT TRUE,
+    credits INT NOT NULL, *between 0 and 120*
+    active BOOLEAN DEFAULT TRUE,
+    UNIQUE (programme_id, module_id),
+    FOREIGN KEY (programme_id) REFERENCES programmes(id),
+    FOREIGN KEY (module_id) REFERENCES modules(id)
+);
+
+CREATE TABLE results (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    module_id INT NOT NULL,
+    mark DECIMAL(5,2) NOT NULL CHECK (mark >= 0 AND mark <= 100),
+    year_level INT NOT NULL CHECK (year_level IN (1, 2, 3)),
+    is_resit BOOLEAN DEFAULT FALSE,
+    UNIQUE (student_id, module_id, is_resit),
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (module_id) REFERENCES modules(id)
+);
+
+CREATE TABLE classifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    classified_by INT NOT NULL,
+    y2_average DECIMAL(5,2), *must be between 0 and 100*
+    y3_average DECIMAL(5,2), *must be between 0 and 100*
+    final_average DECIMAL(5,2), *must be between 0 and 100*
+    proposed_outcome VARCHAR(50),
+    final_outcome VARCHAR(50),
+    is_overridden BOOLEAN DEFAULT FALSE,
+    rationale TEXT,
+    classified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (classified_by) REFERENCES users(id)
+);
+
+CREATE TABLE audit_log (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    action_type ENUM('INSERT','UPDATE','DELETE','OVERRIDE') NOT NULL,
+    action_details TEXT,
+    table_name VARCHAR(50) NOT NULL,
+    record_id INT NOT NULL,
+    changed_by INT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (changed_by) REFERENCES users(id)
+);
