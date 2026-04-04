@@ -1,4 +1,4 @@
-// models/index.js
+
 import User from './user.js';
 import Programme from './programme.js';
 import UserProgramme from './userProgramme.js';

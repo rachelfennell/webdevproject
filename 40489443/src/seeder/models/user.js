@@ -10,7 +10,7 @@ username: {
   allowNull: false, 
   unique: true,
   validate: {
-    notEmpty: true,
+    notEmpty: { msg: 'Username cannot be empty' },
     len: [10, 50]
   },
   set(value) {
@@ -24,21 +24,21 @@ password_hash: {
   type: DataTypes.STRING(255), 
   allowNull: false,
   validate: {
-    notEmpty: true
+    notEmpty: { msg: 'Password cannot be empty' }
   }
 },
 role: { 
   type: DataTypes.ENUM('academic_admin','institutional_admin'), 
   allowNull: false,
   validate: {
-    notEmpty: true
+    notEmpty: { msg: 'Role cannot be empty' }
   }
 },
 first_name: { 
   type: DataTypes.STRING(150), 
   allowNull: false,
   validate: {
-    notEmpty: true
+    notEmpty: { msg: 'First name cannot be empty' }
   },
   set(value) {
     if (typeof value === 'string') {
@@ -50,7 +50,7 @@ last_name: {
   type: DataTypes.STRING(150), 
   allowNull: false,
   validate: {
-    notEmpty: true
+    notEmpty: { msg: 'Last name cannot be empty' }
   },
   set(value) {
     if (typeof value === 'string') {
@@ -66,7 +66,7 @@ email: {
     this.setDataValue('email', value.toLowerCase().trim());
   },
   validate: {
-    notEmpty: true,
+    notEmpty: { msg: 'Email cannot be empty' },
     len: [5, 160],
     isEmail: true,
     is: {
