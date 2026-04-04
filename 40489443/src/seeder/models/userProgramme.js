@@ -1,26 +1,24 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../db.js';
 
-//Define user programme schema
+import { DataTypes } from 'sequelize';
+import sequelize from '../../web/config/db.js';
+
 const UserProgramme = sequelize.define('UserProgramme', {
-  user_id: { 
-    type: DataTypes.INTEGER, 
+  user_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'User ID cannot be empty' },
       isInt: { msg: 'User ID must be an integer' }
     }
   },
-  programme_id: { 
-    type: DataTypes.INTEGER, 
+  programme_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Programme ID cannot be empty' },
       isInt: { msg: 'Programme ID must be an integer' }
     }
   },
-  assigned_date: { 
-    type: DataTypes.DATE, 
+  assigned_date: {
+    type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     validate: {
       isDate: { msg: 'Assigned date must be a valid date' },
@@ -31,14 +29,16 @@ const UserProgramme = sequelize.define('UserProgramme', {
       }
     }
   },
-  active: { type: DataTypes.BOOLEAN, defaultValue: true },
+  active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  }
 }, {
   tableName: 'user_programmes',
   timestamps: false,
   indexes: [
     { unique: true, fields: ['user_id', 'programme_id'] }
-  ],
+  ]
 });
 
-//Export
 export default UserProgramme;

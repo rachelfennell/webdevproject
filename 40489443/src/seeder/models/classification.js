@@ -1,82 +1,88 @@
 
 import { DataTypes } from 'sequelize';
-import sequelize from '../db.js';
+import sequelize from '../../web/config/db.js';
 
-//Define Classification Schema
 const Classification = sequelize.define('Classification', {
-  student_id: { 
-    type: DataTypes.INTEGER, 
+  student_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Student ID is required' }
+      isInt: { msg: 'Student ID must be an integer' }
     }
   },
-  classified_by: { 
-    type: DataTypes.INTEGER, 
+  classified_by: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Classified by is required' }
+      isInt: { msg: 'Classified by must be an integer' }
     }
   },
-  y2_average: { 
-    type: DataTypes.DECIMAL(5,2),
-    validate: {
-      min: { args: 0, msg: 'Y2 average cannot be less than 0' },
-      max: { args: 100, msg: 'Y2 average cannot be more than 100' }
-    }
+  y2_average: {
+    type: DataTypes.DECIMAL(5, 2),
+    allowNull: true,
+validate: {
+  isDecimal: { msg: 'Year 2 average must be a valid number between 0 and 100' },
+  min: 0,
+  max: 100
+}
   },
-  y3_average: { 
-    type: DataTypes.DECIMAL(5,2),
-    validate: {
-      min: { args: 0, msg: 'Y3 average cannot be less than 0' },
-      max: { args: 100, msg: 'Y3 average cannot be more than 100' }
-    }
+  y3_average: {
+    type: DataTypes.DECIMAL(5, 2),
+    allowNull: true,
+validate: {
+  isDecimal: { msg: 'Y3 average must be a valid number between 0 and 100' },
+  min: 0,
+  max: 100
+}
   },
-  final_average: { 
-    type: DataTypes.DECIMAL(5,2), 
-    validate: {
-      min: { args: 0, msg: 'Final average cannot be less than 0' },
-      max: { args: 100, msg: 'Final average cannot be more than 100' }
-    }
+  final_average: {
+    type: DataTypes.DECIMAL(5, 2),
+    allowNull: true,
+validate: {
+  isDecimal: { msg: 'Final average must be a valid number between 0 and 100' },
+  min: 0,
+  max: 100
+}
   },
-  proposed_outcome: { 
-    type: DataTypes.STRING(50),
-    validate: {
-      notEmpty: { msg: 'Proposed outcome is required' },
-      isValid(value) {
-        if (Number(value) < 0 || Number(value) > 100) {
-          throw new Error('Proposed outcome must be between 0 and 100');
-        }
-      }
-    }
+proposed_outcome: {
+  type: DataTypes.ENUM(
+    'First Class Honours',
+    'Upper Second Class (2:1)',
+    'Lower Second Class (2:2)',
+    'Third Class Honours',
+    'Fail',
+    'Not Eligible'
+  ),
+  allowNull: true
+},
+final_outcome: {
+  type: DataTypes.ENUM(
+    'First Class Honours',
+    'Upper Second Class (2:1)',
+    'Lower Second Class (2:2)',
+    'Third Class Honours',
+    'Fail',
+    'Not Eligible'
+  ),
+  allowNull: true
+},
+  is_overridden: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   },
-  final_outcome: { 
-    type: DataTypes.STRING(50),
-    validate: {
-      notEmpty: { msg: 'Final outcome is required' },
-      isValid(value) {
-        if (Number(value) < 0 || Number(value) > 100) {
-          throw new Error('Final outcome must be between 0 and 100');
-        }
-      }
-    }
-  },
-  is_overridden: { type: DataTypes.BOOLEAN, defaultValue: false },
-  rationale: { 
+  rationale: {
     type: DataTypes.TEXT,
+    allowNull: true,
     set(value) {
-      if (value) this.setDataValue('rationale', value.trim().toLowerCase());
-    },
-    validate: {
-      notEmpty: { msg: 'Rationale is required' }
+      if (value) this.setDataValue('rationale', value.trim());
     }
   },
-  classified_at: { 
-    type: DataTypes.DATE, 
+  classified_at: {
+    type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     validate: {
       isBeforeNow(value) {
-        if (value > new Date()) {
+        if (value && new Date(value) > new Date()) {
           throw new Error('Classification date cannot be in the future');
         }
       }
@@ -85,7 +91,7 @@ const Classification = sequelize.define('Classification', {
 }, {
   tableName: 'classifications',
   timestamps: false,
+  indexes: [ { unique: true, fields: ['student_id'] }]
 });
 
-//Export Model
 export default Classification;

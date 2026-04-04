@@ -1,110 +1,64 @@
+
 import { DataTypes } from 'sequelize';
-import sequelize from '../db.js';
+import sequelize from '../../web/config/db.js';
 
-//Define the Audit Log Schema
 const AuditLog = sequelize.define('AuditLog', {
-  action_type: { 
-    type: DataTypes.ENUM('INSERT','UPDATE','DELETE','OVERRIDE'), 
+  action_type: {
+    type: DataTypes.ENUM('INSERT', 'UPDATE', 'DELETE', 'OVERRIDE'),
     allowNull: false,
-    validate: {
-      notEmpty: { msg: 'Action type cannot be empty' },
-      isIn: {
-        args: [['INSERT','UPDATE','DELETE','OVERRIDE']],
-        msg: 'Action type must be one of INSERT, UPDATE, DELETE, OVERRIDE'
-      }
-    }
   },
-
-  action_details: { 
-    type: DataTypes.TEXT, 
-    allowNull: false,
+  action_details: {
+    type: DataTypes.TEXT,
+    allowNull: true,
     set(value) {
-      if (value) this.setDataValue('action_details', value.trim().toLowerCase());
-    },
-    validate: {
-      notEmpty: { msg: 'Action details cannot be empty' }
+      if (value) this.setDataValue('action_details', value.trim());
     }
   },
-
-table_name: { 
-  type: DataTypes.ENUM(
-    'audit_log', 
-    'modules', 
-    'programmes', 
-    'programme_modules', 
-    'results', 
-    'students', 
-    'users', 
-    'user_programmes', 
-    'classifications'
-  ), 
-  allowNull: false,
-  validate: {
-    notEmpty: { msg: 'Table name cannot be empty' }
-  }
-},
-
-  record_id: { 
-    type: DataTypes.INTEGER, 
+  table_name: {
+    type: DataTypes.ENUM(
+      'users', 'programmes', 'user_programmes', 'students',
+      'modules', 'programme_modules', 'results',
+      'classifications', 'audit_log'
+    ),
+    allowNull: false,
+  },
+  record_id: {
+    type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Record ID cannot be empty' },
       isInt: { msg: 'Record ID must be an integer' }
     }
   },
-
-  changed_by: { 
-    type: DataTypes.STRING(50),
+  changed_by: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    set(value) {
-      if (value) this.setDataValue('changed_by', value.trim().toLowerCase());
-    },
     validate: {
-      notEmpty: { msg: 'Changed by cannot be empty. Must be a valid username' },
-      len: { args: [10, 50], msg: 'Changed by must be a valid username between 10 and 50 characters' }
+      isInt: { msg: 'Changed by must be a valid user ID' }
     }
   },
-
-  old_value: { 
-    type: DataTypes.TEXT, 
-    allowNull: false,
-    set(value) {
-      if (value) this.setDataValue('old_value', value.trim().toLowerCase());
-    },
-    validate: {
-      notEmpty: { msg: 'Old value cannot be empty' }
-    }
+  old_value: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
-
-  new_value: { 
-    type: DataTypes.TEXT, 
-    allowNull: false,
-    set(value) {
-      if (value) this.setDataValue('new_value', value.trim().toLowerCase());
-    },
-    validate: {
-      notEmpty: { msg: 'New value cannot be empty. If deleted, please enter "Deleted"'}
-    }
+  new_value: {
+    type: DataTypes.TEXT,
+    allowNull: true
   },
-
-  changed_at: { 
-    type: DataTypes.DATE, 
-    allowNull: false,
+  changed_at: {
+    type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     validate: {
-      notEmpty: { msg: 'Changed at date cannot be empty' },
-      isBeforeToday(value) {
+      isBeforeNow(value) {
         if (value && new Date(value) > new Date()) {
           throw new Error('Changed at date cannot be in the future');
         }
       }
     }
-  },
-
+  }
 }, {
   tableName: 'audit_log',
   timestamps: false,
+indexes: [{ fields: ['table_name'] }, { fields: ['record_id'] }, { fields: ['changed_by'] }]
 });
 
-//Export model
 export default AuditLog;

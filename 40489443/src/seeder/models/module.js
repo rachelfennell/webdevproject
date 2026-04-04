@@ -1,44 +1,44 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../db.js';
 
-//Define Module Schema
+import { DataTypes } from 'sequelize';
+import sequelize from '../../web/config/db.js';
+
 const Module = sequelize.define('Module', {
-  name: { 
-    type: DataTypes.STRING(400), 
+  name: {
+    type: DataTypes.STRING(400),
     allowNull: false,
     set(value) {
       if (typeof value === 'string') {
-        this.setDataValue('name', value.trim().toLowerCase());
+        this.setDataValue('name', value.trim());
       }
     },
     validate: {
-      notEmpty: { msg: 'Module name cannot be empty' },
+      notEmpty: { msg: 'Module name cannot be empty' }
     }
   },
-  module_code: { 
-    type: DataTypes.STRING(25), 
-    allowNull: false, 
+  module_code: {
+    type: DataTypes.STRING(25),
+    allowNull: false,
     unique: true,
     set(value) {
       if (typeof value === 'string') {
         this.setDataValue('module_code', value.trim().toUpperCase());
       }
     },
-    validate: {
-      notEmpty: { msg: 'Module code cannot be empty' },
-      isValidFormat(value) {
-        // HEM followed by exactly 6 digits
-        if (!/^HEM\d{6}$/.test(value)) {
-          throw new Error('Module code must be in the format HEM000000');
-        }
-      }
-    }
+ validate: {
+  notEmpty: { msg: 'Module code cannot be empty' },
+  is: {
+    args: /^HEM\d{6}$/,
+    msg: 'Module code must be in the format HEM000000'
+  }
+}
   },
-  active: { type: DataTypes.BOOLEAN, defaultValue: true },
+  active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  }
 }, {
   tableName: 'modules',
-  timestamps: false,
+  timestamps: false
 });
 
-//Export
 export default Module;

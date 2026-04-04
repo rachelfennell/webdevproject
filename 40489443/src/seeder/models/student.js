@@ -1,11 +1,10 @@
-import { DataTypes } from "sequelize";
-import sequelize from '../db.js';
-import Programme from './programme.js';
 
-//Define the Schema
+import { DataTypes } from 'sequelize';
+import sequelize from '../../web/config/db.js';
+
 const Student = sequelize.define('Student', {
-  student_number: { 
-    type: DataTypes.STRING(10), 
+  student_number: {
+    type: DataTypes.STRING(10),
     allowNull: false,
     unique: true,
     set(value) {
@@ -19,34 +18,31 @@ const Student = sequelize.define('Student', {
       len: { args: [10, 10], msg: 'Student number must be exactly 10 digits' }
     }
   },
-
-  first_name: { 
+  first_name: {
     type: DataTypes.STRING(150),
     allowNull: false,
     set(value) {
       if (typeof value === 'string') {
-        this.setDataValue('first_name', value.trim().toLowerCase());
+        this.setDataValue('first_name', value.trim());
       }
     },
     validate: {
       notEmpty: { msg: 'First name cannot be empty' }
     }
   },
-
-  last_name: { 
+  last_name: {
     type: DataTypes.STRING(150),
     allowNull: false,
     set(value) {
       if (typeof value === 'string') {
-        this.setDataValue('last_name', value.trim().toLowerCase());
+        this.setDataValue('last_name', value.trim());
       }
     },
     validate: {
       notEmpty: { msg: 'Last name cannot be empty' }
     }
   },
-
-  dob: { 
+  dob: {
     type: DataTypes.DATEONLY,
     allowNull: false,
     validate: {
@@ -61,60 +57,35 @@ const Student = sequelize.define('Student', {
       }
     }
   },
-
-programme_id: {
-  type: DataTypes.STRING(8),
-  allowNull: false,
-  set(value) {
-    if (typeof value === 'string') this.setDataValue('programme_id', value.trim().toUpperCase());
-  },
-  validate: {
-    notEmpty: { msg: 'Programme ID cannot be empty' },
-    isProgrammeExists: async function(value) {
-      const Programme = require('./programme.js'); 
-      const programme = await Programme.findOne({ where: { programme_id: value } });
-      if (!programme) {
-        throw new Error('Programme ID does not exist in Programmes table');
-      }
+  programme_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      isInt: { msg: 'Programme ID must be an integer' }
     }
-  }
-},
-
-  enrolled_date: { 
-    type: DataTypes.DATEONLY,
+  },
+  enrolled_date: {
+    type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
     validate: {
       isDate: { msg: 'Enrolled date must be a valid date' }
     }
   },
-
   graduation_year: {
     type: DataTypes.INTEGER,
     allowNull: false,
     validate: {
-      notEmpty: { msg: 'Graduation year cannot be empty' },
       min: { args: [1990], msg: 'Graduation year cannot be before 1990' },
       max: { args: [2100], msg: 'Graduation year cannot be after 2100' }
     }
   },
-
-  active_student: { 
+  active_student: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
   }
-
 }, {
   tableName: 'students',
   timestamps: false
 });
 
-//Export
 export default Student;
-
-// Checks against programme_id in Programme model
-Student.belongsTo(Programme, {
-  foreignKey: 'programme_id',
-  targetKey: 'programme_id',
-  onUpdate: 'CASCADE',
-  onDelete: 'RESTRICT'
-});
