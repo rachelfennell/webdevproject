@@ -1,0 +1,38 @@
+<h3>Student Details: <%= student.first_name %> <%= student.last_name %></h3>
+<p><strong>Student Number:</strong> <%= student.student_number %></p>
+
+<h5>Results</h5>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Mark</th>
+      <th>Credits</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% student.Results.forEach(result => { %>
+      <tr>
+        <td><%= result.Module?.name || 'N/A' %></td>
+        <td><%= result.mark %></td>
+        <td><%= result.credits %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<h5>Classification Summary</h5>
+<p><strong>Weighted Average:</strong> <%= weightedAverage %>%</p>
+
+<% if (student.overriddenClassification) { %>
+  <p><strong>Original Classification:</strong> <%= classification %></p>
+  <p><strong>Overridden Classification:</strong> <%= student.overriddenClassification %></p>
+  <p><strong>Override Rationale:</strong> <%= student.overrideRationale %></p>
+<% } else { %>
+  <p><strong>Classification:</strong> <%= classification %></p>
+<% } %>
+
+<a href="/academic/students/<%= student.id %>/results" class="btn btn-secondary">Manage Results</a>
+<a href="/academic/students/<%= student.id %>/override" class="btn btn-warning">Override Classification</a>
+<a href="/academic/students" class="btn btn-secondary">Back to Students</a>
+

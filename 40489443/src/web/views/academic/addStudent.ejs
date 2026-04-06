@@ -1,0 +1,19 @@
+<h3>Add Student</h3>
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/academic/students/add">
+  <input type="text" name="first_name" placeholder="First Name" class="form-control mb-2" required>
+  <input type="text" name="last_name" placeholder="Last Name" class="form-control mb-2" required>
+  <input type="text" name="student_number" placeholder="Student Number" class="form-control mb-2" required>
+
+  <label>Programme</label>
+  <select name="programmeId" class="form-select mb-2" required>
+    <% programmes.forEach(programme => { %>
+      <option value="<%= programme.id %>"><%= programme.name %></option>
+    <% }) %>
+  </select>
+
+  <button class="btn btn-primary">Add Student</button>
+</form>

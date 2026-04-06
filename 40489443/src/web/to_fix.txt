@@ -1,0 +1,50 @@
+academic admin issues 
+
+Error adding student
+Cannot update programme, only name 
+when click on update student it shows the students result details
+cannot update results 
+cannot add a module to a student
+cannot update classifications
+need a way to log out 
+calculate classifications page
+audit log page
+
+
+
+institutional admin issues
+
+manage admins doesn't work
+manage programs button doesn't work
+http://localhost:3000/institutional/programmes/create doesn't work
+
+
+
+error page doesn't work at all
+errors not showing up correct on screen 
+
+
+
+login works
+can change student name
+academic admin dashboard works
+institutional admin dashboard works
+connects to db correctly
+
+
+
+things to fix in order:
+1. sort out inst admins first - get buttons working on dashboard
+2. fix problems with it starting with creating users then creating programmes
+3. sort out managing both and showing list on screen
+4. sort out editing existing users
+5. sort out editing existing programmes
+6. change what fields are showing on screen in boxes 
+7. fix adding a new student
+8. fix editing students 
+9. sort out viewing students and student details 
+10. figure out ability to add in new results for modules
+11. manually update classifications
+12. need to work out method for working out y2/3 total scores to equal classifications
+13. audit log - everything needs done
+

@@ -1,0 +1,18 @@
+<h3>Create Programme</h3>
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/institutional/programmes/create">
+  <input type="text" name="name" placeholder="Programme Name" class="form-control mb-2" required>
+  <input type="text" name="code" placeholder="Programme Code" class="form-control mb-2" required>
+
+  <label>Assign Academic Admin(s)</label>
+  <select name="adminIds" class="form-select mb-2" multiple>
+    <% admins.forEach(admin => { %>
+      <option value="<%= admin.id %>"><%= admin.first_name %> <%= admin.last_name %></option>
+    <% }) %>
+  </select>
+
+  <button class="btn btn-primary">Create</button>
+</form>

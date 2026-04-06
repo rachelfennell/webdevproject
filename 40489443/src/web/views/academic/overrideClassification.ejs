@@ -1,0 +1,24 @@
+<h3>Override Classification for <%= student.first_name %> <%= student.last_name %></h3>
+
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/academic/students/<%= student.id %>/override">
+  <label>New Classification</label>
+  <select name="classification" class="form-select mb-2" required>
+    <option value="First Class Honours" <%= student.overriddenClassification === 'First Class Honours' ? 'selected' : '' %>>First Class Honours</option>
+    <option value="Upper Second (2:1)" <%= student.overriddenClassification === 'Upper Second (2:1)' ? 'selected' : '' %>>Upper Second (2:1)</option>
+    <option value="Lower Second (2:2)" <%= student.overriddenClassification === 'Lower Second (2:2)' ? 'selected' : '' %>>Lower Second (2:2)</option>
+    <option value="Third Class Honours" <%= student.overriddenClassification === 'Third Class Honours' ? 'selected' : '' %>>Third Class Honours</option>
+    <option value="Fail" <%= student.overriddenClassification === 'Fail' ? 'selected' : '' %>>Fail</option>
+    <option value="Not Eligible" <%= student.overriddenClassification === 'Not Eligible' ? 'selected' : '' %>>Not Eligible</option>
+  </select>
+
+  <label>Rationale</label>
+  <textarea name="rationale" class="form-control mb-2" rows="3" placeholder="Explain reason for override" required><%= student.overrideRationale || '' %></textarea>
+
+  <button class="btn btn-warning">Submit Override</button>
+</form>
+
+<a href="/academic/students/<%= student.id %>/details" class="btn btn-secondary mt-2">Back to Student Details</a>

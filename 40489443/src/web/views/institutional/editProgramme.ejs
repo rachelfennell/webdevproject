@@ -1,0 +1,20 @@
+<h3>Edit Programme</h3>
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/institutional/programmes/edit/<%= programme.id %>">
+  <input type="text" name="name" value="<%= programme.name %>" class="form-control mb-2" required>
+  <input type="text" name="code" value="<%= programme.code %>" class="form-control mb-2" required>
+
+  <label>Assign Academic Admin(s)</label>
+  <select name="adminIds" class="form-select mb-2" multiple>
+    <% admins.forEach(admin => { %>
+      <option value="<%= admin.id %>" <%= programme.admins.some(a => a.id === admin.id) ? 'selected' : '' %>>
+        <%= admin.first_name %> <%= admin.last_name %>
+      </option>
+    <% }) %>
+  </select>
+
+  <button class="btn btn-primary">Update</button>
+</form>

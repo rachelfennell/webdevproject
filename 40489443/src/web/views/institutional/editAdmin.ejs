@@ -1,0 +1,12 @@
+<h3>Edit Academic Administrator</h3>
+
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/institutional/admins/edit/<%= admin.id %>">
+  <input type="text" name="first_name" value="<%= admin.first_name %>" class="form-control mb-2" required>
+  <input type="text" name="last_name" value="<%= admin.last_name %>" class="form-control mb-2" required>
+  <input type="password" name="password" placeholder="New Password (leave blank to keep current)" class="form-control mb-2">
+  <button class="btn btn-primary">Update</button>
+</form>

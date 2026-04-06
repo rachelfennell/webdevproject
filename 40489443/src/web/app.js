@@ -1,11 +1,13 @@
 // Imports
 import express from 'express';
 import path from 'path';
-import session from 'express-session';
+import session, { Cookie } from 'express-session';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
+import institutionalRoutes from './routes/institutionalRoutes.js';
+import academicRoutes from './routes/academicRoutes.js';
 
-// Models
+// DB Models
 import '../seeder/models/index.js';
 import './config/db.js';
 
@@ -29,11 +31,14 @@ app.use(session({
   secret: 'webdev-secret',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 600000 }
+  cookie : { maxAge : 600000 }
 }));
 
 // Routes — must be after session
 app.use('/', authRoutes);
+app.use('/', institutionalRoutes);
+app.use('/', academicRoutes);
+
 
 // Start server
 app.listen(PORT, () => {
@@ -42,3 +47,9 @@ app.listen(PORT, () => {
 
 //cd C:\Users\rache\hedclass\40489443\src\web
 //npx nodemon app.js
+//http://localhost:3000/login
+
+//Bootstrap -  before head
+//<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+//Bootstrap - before body
+//<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

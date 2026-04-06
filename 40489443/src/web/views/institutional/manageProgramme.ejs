@@ -1,0 +1,29 @@
+<h3>Programmes</h3>
+<a href="/institutional/programmes/create" class="btn btn-success mb-3">Create New Programme</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Assigned Admins</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% programmes.forEach(programme => { %>
+      <tr>
+        <td><%= programme.code %></td>
+        <td><%= programme.name %></td>
+        <td>
+          <% programme.admins.forEach(admin => { %>
+            <span class="badge bg-primary"><%= admin.first_name %> <%= admin.last_name %></span>
+          <% }) %>
+        </td>
+        <td>
+          <a href="/institutional/programmes/edit/<%= programme.id %>" class="btn btn-sm btn-primary">Edit</a>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

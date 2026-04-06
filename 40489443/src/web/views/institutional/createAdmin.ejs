@@ -1,0 +1,13 @@
+<h3>Create Academic Administrator</h3>
+
+<% if (error) { %>
+  <div class="alert alert-danger"><%= error %></div>
+<% } %>
+
+<form method="POST" action="/institutional/admins/create">
+  <input type="text" name="username" placeholder="Username" class="form-control mb-2" required>
+  <input type="text" name="first_name" placeholder="First Name" class="form-control mb-2" required>
+  <input type="text" name="last_name" placeholder="Last Name" class="form-control mb-2" required>
+  <input type="password" name="password" placeholder="Password" class="form-control mb-2" required>
+  <button class="btn btn-primary">Create</button>
+</form>

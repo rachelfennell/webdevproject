@@ -1,0 +1,29 @@
+<!-- views/academic/manageResults.ejs -->
+<h3>Results for <%= student.first_name %> <%= student.last_name %></h3>
+<p><strong>Student Number:</strong> <%= student.student_number %></p>
+
+<a href="/academic/students/<%= student.id %>/results/add" class="btn btn-primary mb-3">Add Result</a>
+<a href="/academic/students/<%= student.id %>/details" class="btn btn-secondary mb-3">Back to Student Details</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Mark</th>
+      <th>Credits</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% student.Results.forEach(result => { %>
+      <tr>
+        <td><%= result.Module?.name || 'N/A' %></td>
+        <td><%= result.mark %></td>
+        <td><%= result.credits %></td>
+        <td>
+          <a href="/academic/students/<%= student.id %>/results/edit/<%= result.id %>" class="btn btn-warning btn-sm">Edit</a>
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
