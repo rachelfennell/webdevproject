@@ -1,7 +1,11 @@
 
 //http://localhost/phpmyadmin
-//nodemon app.js
+//Must be in C:\Users\rache\hedclass\40489443\src\web> 
+//npx nodemon app.js
 
+//Seeding order
+//Users → Programmes → Modules → ProgrammeModules → UserProgrammes 
+//→ Students → Results → Classifications → AuditLog
 
 import { Sequelize } from 'sequelize';
 
