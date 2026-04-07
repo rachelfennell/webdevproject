@@ -18,16 +18,25 @@ export const dashboard = async (req, res) => {
   }
 };
 
-// View Academic Admins
-export const viewAdmins = async (req, res) => {
+// Admin Dashboard
+export const adminDashboard = async (req, res) => {
   try {
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
-    res.render('institutional/manageAdmins', { user: req.session.user, admins });
+    res.render('institutional/adminDashboard', { user: req.session.user, admins });
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to load academic admins' });
+    res.render('error', { message: 'Unable to load ' });
   }
 };
+
+
+
+
+
+
+
+// View Academic Admins
+
 
 // Add Academic Admin 
 export const addAdminForm = async (req, res) => {

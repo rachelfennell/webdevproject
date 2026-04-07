@@ -13,13 +13,24 @@ router.get(
   institutionalController.dashboard
 );
 
-// View all Academic Admins
+// Admin Dashboard
 router.get(
   '/institutional/admins',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.viewAdmins
+  institutionalController.adminDashboard
 );
+
+
+
+
+
+
+
+
+
+// View all Academic Admins
+
 
 // Add Academic Admin
 router.get(
