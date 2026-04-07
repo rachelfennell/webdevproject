@@ -18,7 +18,7 @@ router.get(
   '/institutional/manageAdmins',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.adminDashboard
+  institutionalController.manageAdmins
 );
 
 // View all Academic Admins Page

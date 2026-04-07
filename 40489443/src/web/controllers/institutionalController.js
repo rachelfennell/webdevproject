@@ -19,10 +19,10 @@ export const dashboard = async (req, res) => {
 };
 
 // Admin Dashboard
-export const adminDashboard = async (req, res) => {
+export const manageAdmins = async (req, res) => {
   try {
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
-    res.render('institutional/adminDashboard', { user: req.session.user, admins });
+    res.render('institutional/manageAdmins', { user: req.session.user, admins });
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to load ' });
