@@ -35,37 +35,7 @@ export const viewAllAdminsPage = async (req, res) => {
   try {
     //Find all academic admins from users db
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
-    
-    //Render the view with the list of academic admins
     res.render('institutional/viewAllAdmins', { user: req.session.user, admins });
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to load ' });
@@ -95,8 +65,32 @@ export const editAdminPage = async (req, res) => {
   }
 };
 
+// Academic Admin Profile Page
+export const viewAdminProfile = async (req, res) => {
+  try {
+
+    const adminId = req.params.id;
+
+const admin = await User.findByPk(adminId, {
+      where: { role: 'academic_admin' },
+      include: {
+        model: Programme,
+        as: 'programmes', 
+        through: { attributes: ['assigned_date', 'active'] } 
+      }
+    });
 
 
+    res.render('institutional/adminProfile', { 
+      user: req.session.user, 
+      admins,
+    programmes: admin.programmes });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
 
 
 

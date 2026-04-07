@@ -23,7 +23,7 @@ router.get(
 
 // View all Academic Admins Page
 router.get(
-  '/institutional/viewAllAdmins',
+  '/institutional/viewAdmins',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.viewAllAdminsPage
@@ -45,6 +45,13 @@ router.get(
   institutionalController.editAdminPage
 );
 
+// View Academic Admins Profile Page
+router.get(
+  '/institutional/adminProfile/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.viewAdminProfile
+);
 
 
 
