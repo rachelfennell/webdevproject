@@ -15,7 +15,7 @@ router.get(
 
 // Admin Dashboard
 router.get(
-  '/institutional/admins',
+  '/institutional/manageAdmins',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.adminDashboard
