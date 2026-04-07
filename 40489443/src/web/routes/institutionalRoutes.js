@@ -29,7 +29,7 @@ router.get(
   institutionalController.viewAllAdminsPage
 );
 
-// Add New Academic Admin Page
+// Create New Academic Admin Page
 router.get(
   '/institutional/createAdmin',
   isAuthenticated,
@@ -37,13 +37,23 @@ router.get(
   institutionalController.createAdminPage
 );
 
-// Edie Academic Admins Page
+// Edit Academic Admins Page
 router.get(
   '/institutional/editAdmin',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.editAdminPage
 );
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -64,12 +74,14 @@ router.get(
   isInstitutionalAdmin,
   institutionalController.addAdminForm
 );
+
 router.post(
   '/institutional/admins/add',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.addAdmin
 );
+
 
 // Edit Academic Admin
 router.get(

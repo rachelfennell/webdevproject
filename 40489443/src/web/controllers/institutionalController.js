@@ -1,5 +1,5 @@
 
-import { User, Programme } from '../../seeder/models/index.js'; 
+import { User, Programme, UserProgramme } from '../../seeder/models/index.js'; 
 
 // Dashboard
 export const dashboard = async (req, res) => {
@@ -33,8 +33,39 @@ export const adminDashboard = async (req, res) => {
 // View All Academic Admins Page
 export const viewAllAdminsPage = async (req, res) => {
   try {
+    //Find all academic admins from users db
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
+    
+    //Render the view with the list of academic admins
     res.render('institutional/viewAllAdmins', { user: req.session.user, admins });
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to load ' });
@@ -96,11 +127,6 @@ export const editAdminPage = async (req, res) => {
 
 
 
-
-
-
-
-
 // Add Academic Admin 
 export const addAdminForm = async (req, res) => {
   res.render('institutional/addAdmin', { user: req.session.user, error: null });
@@ -123,6 +149,7 @@ export const addAdmin = async (req, res) => {
     res.render('institutional/addAdmin', { user: req.session.user, error: 'Error creating admin' });
   }
 };
+
 
 // Edit Academic Admin
 export const editAdminForm = async (req, res) => {

@@ -24,9 +24,60 @@
     </div>
   </nav>
 
+
+<h1>All Academic Admins</h1>
+
+
  <div class="container">
-    <h2>All Academic Admins</h2>
-  
+    
+<!-- Admins Table -->
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Username</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% admins.forEach(admin => { %>
+      <tr>
+        <td><%= admin.id %></td>
+        <td><%= admin.first_name %> <%= admin.last_name %></td>
+        <td><%= admin.username %></td>
+        <td><%= admin.email %></td>
+        <td>
+         
+        </td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
 
 
 
@@ -53,5 +104,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
 </body>
 </html>
