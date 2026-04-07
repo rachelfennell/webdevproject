@@ -35,7 +35,7 @@ export const viewAllAdminsPage = async (req, res) => {
   try {
     //Find all academic admins from users db
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
-    res.render('institutional/viewAllAdmins', { user: req.session.user, admins });
+    res.render('institutional/viewAdmins', { user: req.session.user, admins });
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to load ' });
