@@ -45,13 +45,20 @@ router.get(
   institutionalController.getEditAdminPage
 );
 
-router.get(
+router.post(
   '/institutional/editAdmin/:id',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.postAdminPage
 );
 
+// Remove Programme from Admin
+router.post(
+  '/institutional/removeProgramme/:adminId',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.removeProgramme
+);
 
 
 

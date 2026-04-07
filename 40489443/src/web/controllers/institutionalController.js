@@ -1,7 +1,7 @@
 
 import { User, Programme, UserProgramme } from '../../seeder/models/index.js';
 
-// Dashboard
+// Main Dashboard
 export const dashboard = async (req, res) => {
   try {
     const adminCount = await User.count({ where: { role: 'academic_admin' } });
@@ -18,7 +18,7 @@ export const dashboard = async (req, res) => {
   }
 };
 
-// Admin Dashboard
+// Manage Admins Dashboard
 export const manageAdmins = async (req, res) => {
   try {
     const admins = await User.findAll({ where: { role: 'academic_admin' } });
@@ -40,7 +40,6 @@ export const viewAllAdminsPage = async (req, res) => {
     res.render('error', { message: 'Unable to load ' });
   }
 };
-
 
   // Academic Admin Profile Page
   export const viewAdminProfile = async (req, res) => {
@@ -72,6 +71,7 @@ export const getEditAdminPage = async (req, res) => {
     const adminId = req.params.id;
    
     const admin = await User.findByPk(adminId, {
+      where: { role: 'academic_admin' },
       include: {
         model: Programme,
         through: { attributes: ['assigned_date', 'active'] }
@@ -91,7 +91,6 @@ export const getEditAdminPage = async (req, res) => {
     res.render('error', { message: 'Unable to load edit admin details page' });
   }
 };
-
 
 export const postAdminPage = async (req, res) => {
   try {
@@ -119,7 +118,29 @@ export const postAdminPage = async (req, res) => {
   }
 };
 
+// Remove Assigned Programme from Admin (Mark Active: False - Audit Log)
+export const removeProgramme = async (req, res) => {
+  try {
+    const { adminId } = req.params;  
+    const { programmeId } = req.body;  
 
+    const userProgramme = await UserProgramme.findOne({
+      where: {
+        user_id: adminId,
+        programme_id: programmeId }});
+
+    if (!userProgramme) {
+      return res.status(404).render('error', { message: 'Programme not found for this admin.' });}
+
+    userProgramme.active = false;
+    await userProgramme.save();
+
+    res.redirect(`/institutional/adminProfile/${adminId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'Error removing programme from admin' });
+  }
+};
 
 
 

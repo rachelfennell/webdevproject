@@ -32,44 +32,64 @@
 </div>
 
 <div>
-<h2>Assigned Programmes</h2>
-<% if (admin.Programmes && admin.Programmes.length > 0) { %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Programme Name</th>
-        <th>Assigned Date</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% admin.Programmes.forEach(programme => { %>
+  <h2>Programmes</h2>
+
+  // Assigned
+  <% if (admin.Programmes && admin.Programmes.length > 0) { %>
+    <h3>Currently Assigned Programmes</h3>
+    <table class="table">
+      <thead>
         <tr>
-          <td><%= programme.name %></td>
-          <td><%= programme.UserProgramme.assigned_date %></td>
-          <td><%= programme.UserProgramme.active ? 'Active' : 'Inactive' %></td>
+          <th>Programme Name</th>
+          <th>Assigned Date</th>
+          <th>Status</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
-<% } else { %>
-  <p>No programmes assigned to this admin.</p>
-<% } %>
+      </thead>
+      <tbody>
+        <% admin.Programmes.forEach(programme => { 
+          if (programme.UserProgramme.active) { %> 
+            <tr>
+              <td><%= programme.name %></td>
+              <td><%= programme.UserProgramme.assigned_date %></td>
+              <td>Active</td>
+            </tr>
+        <% } }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No programmes assigned to this admin.</p>
+  <% } %>
+
+ // Unassigned
+  <% if (admin.Programmes && admin.Programmes.length > 0) { %>
+    <h3>Unassigned Programmes</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Programme Name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% admin.Programmes.forEach(programme => { 
+          if (!programme.UserProgramme.active) { %> 
+            <tr>
+              <td><%= programme.name %></td>
+              <td>Inactive</td>
+            </tr>
+        <% } }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No unassigned programmes.</p>
+  <% } %>
 </div>
+
 
 
 <div>
   <a href="/institutional/editAdmin/<%= admin.id %>" class="btn btn-primary">Edit Admin</a>
 </div>
-
-
-
-
-
-
-
-
-
 
 
 </div>

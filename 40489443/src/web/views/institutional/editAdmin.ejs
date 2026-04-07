@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Academic Admins</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
   <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container">
@@ -13,7 +15,8 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
+            <span class="nav-link">Logged in as <%= user.first_name %>
+                <%= user.last_name %></span>
           </li>
           <li class="nav-item">
             <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
@@ -23,10 +26,12 @@
     </div>
   </nav>
 
-    <div class="container">
-    <h1>Edit Academic Admin: <%= admin.first_name %> <%= admin.last_name %></h1>
+  <div class="container">
+    <h1>Edit Academic Admin: <%= admin.first_name %>
+        <%= admin.last_name %>
+    </h1>
 
-  
+
     <form action="/institutional/editAdmin/<%= admin.id %>" method="POST">
       <div class="form-group">
         <label for="username">Username:</label>
@@ -35,27 +40,67 @@
 
       <div class="form-group">
         <label for="first_name">First Name:</label>
-        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= admin.first_name %>" required />
+        <input type="text" class="form-control" id="first_name" name="first_name" value="<%= admin.first_name %>"
+          required />
       </div>
 
       <div class="form-group">
         <label for="last_name">Last Name:</label>
-        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= admin.last_name %>" required />
+        <input type="text" class="form-control" id="last_name" name="last_name" value="<%= admin.last_name %>"
+          required />
       </div>
 
       <div class="form-group">
         <label for="active">Active:</label>
-        <input type="checkbox" id="active" name="active" <%= admin.active ? 'checked' : '' %> />
+        <input type="checkbox" id="active" name="active" value="on" <%=admin.active ? 'checked' : '' %> />
       </div>
 
-  
+<div>
+  <h2>Assigned Programmes</h2>
+  <% if (admin.Programmes && admin.Programmes.length > 0) { %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Programme Name</th>
+          <th>Assigned Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% admin.Programmes.forEach(programme => { %>
+          <tr>
+            <td><%= programme.name %></td>
+            <td><%= programme.UserProgramme.assigned_date %></td>
+            <td><%= programme.UserProgramme.active ? 'Active' : 'Inactive' %></td>
+            <td>
+            
+              <form action="/institutional/admins/removeProgramme/<%= admin.id %>" method="POST">
+                <input type="hidden" name="programmeId" value="<%= programme.id %>" />
+                <button type="submit" class="btn btn-danger">Unassign</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } else { %>
+    <p>No programmes assigned to this admin.</p>
+  <% } %>
+</div>
+
+
+
+
+
+
+
+
+
       <button type="submit" class="btn btn-primary mt-3">Update Admin</button>
     </form>
 
 
- 
-          
-
-
 </body>
+
 </html>
