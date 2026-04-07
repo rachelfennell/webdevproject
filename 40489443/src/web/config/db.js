@@ -1,6 +1,6 @@
 
 //http://localhost/phpmyadmin
-//Must be in C:\Users\rache\hedclass\40489443\src\web> 
+//cd C:\Users\rache\hedclass\40489443\src\web
 //npx nodemon app.js
 
 //Seeding order
@@ -19,7 +19,7 @@ const sequelize = new Sequelize('mysql://root:@localhost:3306/40489443', {
   try {
 await sequelize.authenticate();
     console.log('Sequelize: Connection established successfully.');
-    await sequelize.sync({ alter: true });
+    await sequelize.sync();
     console.log('All tables synced successfully.');
   } catch (error) {
     console.error('Sequelize: Database error:', error);
