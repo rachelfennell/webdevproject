@@ -29,12 +29,12 @@ router.get(
   institutionalController.viewAllAdminsPage
 );
 
-// Create New Academic Admin Page
+// View Academic Admins Profile Page
 router.get(
-  '/institutional/createAdmin',
+  '/institutional/adminProfile/:id',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.createAdminPage
+  institutionalController.viewAdminProfile
 );
 
 // Edit Academic Admins Page
@@ -45,16 +45,13 @@ router.get(
   institutionalController.editAdminPage
 );
 
-// View Academic Admins Profile Page
+// Create New Academic Admin Page
 router.get(
-  '/institutional/adminProfile/:id',
+  '/institutional/createAdmin',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.viewAdminProfile
+  institutionalController.createAdminPage
 );
-
-
-
 
 
 
@@ -90,19 +87,7 @@ router.post(
 );
 
 
-// Edit Academic Admin
-router.get(
-  '/institutional/admins/edit/:id',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.editAdminForm
-);
-router.post(
-  '/institutional/admins/edit/:id',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.editAdmin
-);
+
 
 // Assign Programmes to Admin
 router.get(

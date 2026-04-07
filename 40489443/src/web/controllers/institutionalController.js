@@ -53,12 +53,13 @@ export const createAdminPage = async (req, res) => {
 };
 
 // Edit Existing Academic Admin Page
-export const editAdminPage =  async (req, res) => {
+
+export const editAdminPage = async (req, res) => {
   try {
     const adminId = req.params.id;
     const { username, first_name, last_name, active } = req.body;
 
-    // Find the admin by ID
+  
     const admin = await User.findByPk(adminId, {
       include: {
         model: Programme,
@@ -66,28 +67,22 @@ export const editAdminPage =  async (req, res) => {
       }
     });
 
-    if (!admin) return res.render('error', { message: 'Admin not found' });
+    if (!admin) {
+      return res.render('error', { message: 'Admin not found' });
+    }
 
-    // Update admin's fields
+    // Update the admin fields
     admin.username = username;
     admin.first_name = first_name;
     admin.last_name = last_name;
-    admin.active = active === 'on';  // Checkbox returns 'on' if checked, so we compare it
+    admin.active = active === 'on';
 
-    // Save the updated admin
+   
     await admin.save();
 
-    // Render edit page with admin and their associated programmes
-    res.render('institutional/editAdmin', { 
-      user: req.session.user, 
-      admin,
-      programmes: admin.programmes 
-    });
+   
+    return res.redirect(`/institutional/adminProfile/${adminId}`);
 
-
-
-    // Redirect back to the admin profile page or show a success message
-    res.redirect(`/institutional/admins/${adminId}`);
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to update admin details' });
