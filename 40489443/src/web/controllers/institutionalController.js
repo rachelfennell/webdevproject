@@ -53,7 +53,7 @@ export const createAdminPage = async (req, res) => {
 };
 
 // Edit Existing Academic Admin Page
-export const editAdmin = async (req, res) => {
+export const editAdminPage =  async (req, res) => {
   try {
     const adminId = req.params.id;
     const { username, first_name, last_name, active } = req.body;
