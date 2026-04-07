@@ -51,8 +51,11 @@ things to fix in order:
 
 
 
-
-Finished and want to improve
+Improve
 1. Add in search bar on viewAdmins page
 2. Add in back to home dashboard on all pages
-
+3. Display Active/Inactive on admin profile
+4. Option to search admins by active or inactive profiles
+5. If admin is inactive, all assigned programmes must be inactive too - throw error
+6. Add in unassigned date for admins
+7. Some notification to say that change has been made when editing

@@ -95,7 +95,7 @@ export const getEditAdminPage = async (req, res) => {
 export const postAdminPage = async (req, res) => {
   try {
     const adminId = req.params.id;
-    const { username, first_name, last_name, active } = req.body;
+    const { username, email, first_name, last_name, active } = req.body;
 
     const admin = await User.findByPk(adminId);
      
@@ -104,6 +104,7 @@ export const postAdminPage = async (req, res) => {
 
     
     admin.username = username;
+    admin.email = email;
     admin.first_name = first_name;
     admin.last_name = last_name;
     admin.active = active === 'on'; 

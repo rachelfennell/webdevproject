@@ -52,9 +52,9 @@ router.post(
   institutionalController.postAdminPage
 );
 
-// Remove Programme from Admin
+// Remove Programme from Admin (Inactivate)
 router.post(
-  '/institutional/removeProgramme/:adminId',
+  '/institutional/removeProgramme/:id',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.removeProgramme
