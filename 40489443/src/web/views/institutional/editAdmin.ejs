@@ -53,25 +53,8 @@
     </form>
 
 
-    <h3 class="mt-5">Assigned Programmes:</h3>
-    <ul class="list-group">
-      <% if (admin.programmes && admin.programmes.length > 0) { %>
-        <% admin.programmes.forEach(programme => { %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <%= programme.name %>
+ 
             
-          
-            <form action="/institutional/admins/removeProgramme/<%= admin.id %>" method="POST" style="display: inline;">
-              <input type="hidden" name="programmeId" value="<%= programme.id %>" />
-              <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-            </form>
-          </li>
-        <% }) %>
-      <% } else { %>
-        <p>No programmes assigned.</p>
-      <% } %>
-    </ul>
-  </div>
 
 
 </body>
