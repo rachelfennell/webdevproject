@@ -42,8 +42,35 @@ router.get(
   '/institutional/editAdmin/:id',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.editAdminPage
+  institutionalController.getEditAdminPage
 );
+
+router.get(
+  '/institutional/editAdmin/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.postAdminPage
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Create New Academic Admin Page
 router.get(
