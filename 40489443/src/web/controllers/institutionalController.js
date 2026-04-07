@@ -75,13 +75,14 @@ const admin = await User.findByPk(adminId, {
         model: Programme,
         through: { attributes: ['assigned_date', 'active'] },
       }
-    });
-console.log(admin);  
+    }); 
 
     res.render('institutional/adminProfile', { 
       user: req.session.user, 
       admin,
     programmes: admin.programmes });
+
+
 
   } catch (err) {
     console.error(err);

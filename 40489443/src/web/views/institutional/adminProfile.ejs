@@ -28,7 +28,7 @@
 <p>Email: <%= admin.email %></p>
 
 <h2>Assigned Programmes</h2>
-<% if (programmes && programmes.length > 0) { %>
+<% if (admin.Programmes && admin.Programmes.length > 0) { %>
   <table class="table">
     <thead>
       <tr>
@@ -38,7 +38,7 @@
       </tr>
     </thead>
     <tbody>
-      <% programmes.forEach(programme => { %>
+      <% admin.Programmes.forEach(programme => { %>
         <tr>
           <td><%= programme.name %></td>
           <td><%= programme.UserProgramme.assigned_date %></td>
