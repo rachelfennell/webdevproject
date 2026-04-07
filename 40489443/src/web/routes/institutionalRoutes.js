@@ -39,7 +39,7 @@ router.get(
 
 // Edit Academic Admins Page
 router.get(
-  '/institutional/editAdmin',
+  '/institutional/editAdmin/:id',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.editAdminPage

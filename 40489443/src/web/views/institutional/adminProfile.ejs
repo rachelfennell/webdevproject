@@ -24,9 +24,14 @@
   </nav>
 
 <div>
+  <div>
 <h1>Admin Profile: <%= admin.first_name %> <%= admin.last_name %></h1>
+<p>Username: <%= admin.username %></p>
 <p>Email: <%= admin.email %></p>
+<p>Username: <%= admin.username %></p>
+</div>
 
+<div>
 <h2>Assigned Programmes</h2>
 <% if (admin.Programmes && admin.Programmes.length > 0) { %>
   <table class="table">
@@ -50,12 +55,12 @@
 <% } else { %>
   <p>No programmes assigned to this admin.</p>
 <% } %>
-
-<a href="/institutional/viewAdmins" class="btn btn-secondary">Back to Admin List</a>
-
+</div>
 
 
-
+<div>
+  <a href="/institutional/admins/edit/<%= admin.id %>" class="btn btn-primary">Edit Admin</a>
+</div>
 
 
 
@@ -68,7 +73,7 @@
 
 
 </div>
-
+<a href="/institutional/viewAdmins" class="btn btn-secondary">Back to Admin List</a>
 
 </body>
 </html>

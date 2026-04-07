@@ -24,31 +24,45 @@
   </nav>
 
  <div class="container">
-    <h2>Edit Academic Admin</h2>
+    <h1>Edit Academic Admin : <%= admin.first_name %> <%= admin.last_name %></h1>
   
+    <form action="/institutional/admins/edit/<%= admin.id %>" method="POST">
+  <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" class="form-control" id="username" name="username" value="<%= admin.username %>" required />
+  </div>
 
+  <div class="form-group">
+    <label for="first_name">First Name:</label>
+    <input type="text" class="form-control" id="first_name" name="first_name" value="<%= admin.first_name %>" required />
+  </div>
 
+  <div class="form-group">
+    <label for="last_name">Last Name:</label>
+    <input type="text" class="form-control" id="last_name" name="last_name" value="<%= admin.last_name %>" required />
+  </div>
 
+  <div class="form-group">
+    <label for="active">Active:</label>
+    <input type="checkbox" id="active" name="active" <%= admin.active ? 'checked' : '' %> />
+  </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<h3>Assigned Programmes:</h3>
+<ul>
+  <% if (admin.programmes && admin.programmes.length > 0) { %>
+    <% admin.programmes.forEach(programme => { %>
+      <li>
+        <%= programme.name %> 
+        <form action="/institutional/admins/removeProgramme/<%= admin.id %>" method="POST">
+          <input type="hidden" name="programmeId" value="<%= programme.id %>" />
+          <button type="submit" class="btn btn-danger">Remove</button>
+        </form>
+      </li>
+    <% }) %>
+  <% } else { %>
+    <p>No programmes assigned.</p>
+  <% } %>
+</ul>
 
 
 
