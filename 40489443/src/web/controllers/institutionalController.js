@@ -67,7 +67,7 @@ export const editAdminPage = async (req, res) => {
 export const viewAdminProfile = async (req, res) => {
   try {
 
-    const adminId = req.params.idd;
+    const adminId = req.params.id;
 
 const admin = await User.findByPk(adminId, {
       where: { role: 'academic_admin' },
@@ -85,7 +85,7 @@ const admin = await User.findByPk(adminId, {
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to load ' });
+    res.render('error', { message: 'Unable to load Admin Profile' });
   }
 };
 
