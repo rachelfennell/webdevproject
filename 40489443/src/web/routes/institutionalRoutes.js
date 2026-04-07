@@ -21,6 +21,29 @@ router.get(
   institutionalController.adminDashboard
 );
 
+// View all Academic Admins Page
+router.get(
+  '/institutional/viewAllAdmins',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.viewAllAdminsPage
+);
+
+// Add New Academic Admin Page
+router.get(
+  '/institutional/createAdmin',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.createAdminPage
+);
+
+// Edie Academic Admins Page
+router.get(
+  '/institutional/editAdmin',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.editAdminPage
+);
 
 
 
@@ -29,7 +52,9 @@ router.get(
 
 
 
-// View all Academic Admins
+
+
+
 
 
 // Add Academic Admin

@@ -30,12 +30,75 @@ export const adminDashboard = async (req, res) => {
 };
 
 
+// View All Academic Admins Page
+export const viewAllAdminsPage = async (req, res) => {
+  try {
+    const admins = await User.findAll({ where: { role: 'academic_admin' } });
+    res.render('institutional/viewAllAdmins', { user: req.session.user, admins });
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
+
+// Add New Academic Admin Page
+export const createAdminPage = async (req, res) => {
+  try {
+    const admins = await User.findAll({ where: { role: 'academic_admin' } });
+    res.render('institutional/createAdmin', { user: req.session.user, admins });
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
+
+
+// Edit Existing Academic Admin Page
+export const editAdminPage = async (req, res) => {
+  try {
+    const admins = await User.findAll({ where: { role: 'academic_admin' } });
+    res.render('institutional/editAdmin', { user: req.session.user, admins });
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
 
 
 
 
 
-// View Academic Admins
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Add Academic Admin 
