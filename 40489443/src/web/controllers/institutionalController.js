@@ -67,13 +67,12 @@ export const editAdminPage = async (req, res) => {
 export const viewAdminProfile = async (req, res) => {
   try {
 
-    const adminId = req.params.id;
+    const adminId = req.params.idd;
 
 const admin = await User.findByPk(adminId, {
       where: { role: 'academic_admin' },
       include: {
         model: Programme,
-        as: 'programmes', 
         through: { attributes: ['assigned_date', 'active'] } 
       }
     });
