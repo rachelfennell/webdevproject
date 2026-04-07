@@ -74,22 +74,7 @@ export const editAdminPage = async (req, res) => {
     admin.active = active === 'on';   
     await admin.save();
 
-      res.render('institutional/editAdmin', {
-        user: req.session.user,
-        admin,
-        programmes: admin.programmes
-      });
-
-
-
-
-
-
-
-
-
-
-   // return res.redirect(`/institutional/adminProfile/${adminId}`);
+   return res.redirect(`/institutional/adminProfile/${adminId}`);
 
   } catch (err) {
     console.error(err);
