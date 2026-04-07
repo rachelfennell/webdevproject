@@ -122,7 +122,7 @@ export const postAdminPage = async (req, res) => {
 // Remove Assigned Programme from Admin (Mark Active: False - Audit Log)
 export const removeProgramme = async (req, res) => {
   try {
-    const { adminId } = req.params;  
+    const adminId = req.params.id;  
     const { programmeId } = req.body;  
 
     const userProgramme = await UserProgramme.findOne({
