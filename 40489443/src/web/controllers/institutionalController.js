@@ -73,7 +73,8 @@ const admin = await User.findByPk(adminId, {
       where: { role: 'academic_admin' },
       include: {
         model: Programme,
-        through: { attributes: ['assigned_date', 'active'] } 
+        through: { attributes: ['assigned_date', 'active'] },
+        required: true
       }
     });
 
