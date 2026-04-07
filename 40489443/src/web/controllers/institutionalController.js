@@ -73,7 +73,6 @@ export const getEditAdminPage = async (req, res) => {
    
     const admin = await User.findByPk(adminId, {
       include: {
-      where: { role: 'academic_admin' },
         model: Programme,
         through: { attributes: ['assigned_date', 'active'] }
       } });
