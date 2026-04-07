@@ -29,7 +29,6 @@ export const manageAdmins = async (req, res) => {
   }
 };
 
-
 // View All Academic Admins Page
 export const viewAllAdminsPage = async (req, res) => {
   try {
@@ -52,7 +51,6 @@ export const createAdminPage = async (req, res) => {
     res.render('error', { message: 'Unable to load ' });
   }
 };
-
 
 // Edit Existing Academic Admin Page
 export const editAdminPage = async (req, res) => {
@@ -83,7 +81,7 @@ const admin = await User.findByPk(adminId, {
 
     res.render('institutional/adminProfile', { 
       user: req.session.user, 
-      admins,
+      admin,
     programmes: admin.programmes });
 
   } catch (err) {
