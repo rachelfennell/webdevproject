@@ -135,33 +135,6 @@ export const postAdminPage = async (req, res) => {
   }
 };
 
-// Remove Assigned Programme from Admin 
-export const removeProgramme = async (req, res) => {
-  try {
-    const adminId = req.params.id;
-    const { programmeId } = req.body;
-
-    const userProgramme = await UserProgramme.findOne({
-      where: {
-        user_id: adminId,
-        programme_id: programmeId
-      }
-    });
-
-    if (!userProgramme) {
-      return res.status(404).render('error', { message: 'Programme not found for this admin.' });
-    }
-
-    userProgramme.active = false;
-    await userProgramme.save();
-
-    res.redirect(`/institutional/adminProfile/${adminId}`);
-  } catch (err) {
-    console.error(err);
-    res.status(500).render('error', { message: 'Error removing programme from admin' });
-  }
-};
-
 
 // Assign programme to user
 export const assignProgramme = async (req, res) => {
@@ -193,7 +166,32 @@ const admin = await User.findByPk(adminId);
   }
 };
 
+// Remove Assigned Programme from Admin 
+export const removeProgramme = async (req, res) => {
+  try {
+    const adminId = req.params.id;
+    const { programmeId } = req.body;
 
+    const userProgramme = await UserProgramme.findOne({
+      where: {
+        user_id: adminId,
+        programme_id: programmeId
+      }
+    });
+
+    if (!userProgramme) {
+      return res.status(404).render('error', { message: 'Programme not found for this admin.' });
+    }
+
+    userProgramme.active = false;
+    await userProgramme.save();
+
+    res.redirect(`/institutional/adminProfile/${adminId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'Error removing programme from admin' });
+  }
+};
 
 // Add New Academic Admin Page
 export const getCreateAdminPage = async (req, res) => {
@@ -476,38 +474,3 @@ export const postCreateProgrammePage = async (req, res) => {
     res.render('error', { message: 'Unable to load ' });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
