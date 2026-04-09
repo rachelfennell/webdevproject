@@ -1,6 +1,7 @@
 
 import { User, Programme, UserProgramme, Module, ProgrammeModule } from '../../seeder/models/index.js';
 import sequelize from '../config/db.js';
+import { Op } from 'sequelize';
 
 // Main Dashboard
 export const dashboard = async (req, res) => {
@@ -89,7 +90,7 @@ export const getEditAdminPage = async (req, res) => {
       where: { active: true },
       include: {
         model: User,
-        where: { id: {[sequelize.Op.ne]: adminId} }, //Search and exclude for programmes that don't have adminId
+        where: { id: {[Op.ne]: adminId} }, //Search and exclude for programmes that don't have adminId
 required: false
       }
     });
@@ -105,7 +106,7 @@ required: false
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to load edit admin details page' });
+    res.render('error', { message: 'Unable to load edit admin page' });
   }
 };
 
