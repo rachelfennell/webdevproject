@@ -162,8 +162,6 @@ export const getCreateAdminPage = async (req, res) => {
   }
 };
 
-
-// Add Academic Admin 
 export const postCreateAdminPage = async (req, res) => {
 
   const { username, first_name, last_name, password, email } = req.body;
@@ -328,7 +326,42 @@ export const removeModule = async (req, res) => {
   }
 };
 
+// Create New Programme Page
+export const getCreateProgrammePage = async (req, res) => {
+  try {
+    res.render('institutional/createProgramme', { user: req.session.user });
 
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
+
+export const postCreateProgrammePage = async (req, res) => {
+
+  const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap }  = req.body;
+
+  try {
+    const newProgramme = Programme.build({
+      name,
+      programme_code,
+      degree_type,
+      school,
+      y2_weight,
+      y3_weight,
+      resit_cap,
+      active: true
+    });
+
+    await newProgramme.save();
+
+    res.redirect('/institutional/manageProgrammes');
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load ' });
+  }
+};
 
 
 
@@ -393,20 +426,4 @@ export const assignProgrammes = async (req, res) => {
   }
 };
 
-
-// Create Programme
-export const createProgrammeForm = (req, res) => {
-  res.render('institutional/createProgramme', { user: req.session.user, error: null });
-};
-
-export const createProgramme = async (req, res) => {
-  const { name, code, level } = req.body;
-  try {
-    await Programme.create({ name, code, level });
-    res.redirect('/institutional/programmes');
-  } catch (err) {
-    console.error(err);
-    res.render('institutional/createProgramme', { user: req.session.user, error: 'Error creating programme' });
-  }
-};
 

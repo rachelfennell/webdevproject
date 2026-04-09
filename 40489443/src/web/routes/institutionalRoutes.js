@@ -122,9 +122,19 @@ router.post(
   institutionalController.removeModule
 );
 
-
-
-
+// Create New Programme Page
+router.get(
+  '/institutional/createProgramme',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.getCreateProgrammePage
+);
+router.post(
+  '/institutional/createProgramme',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.postCreateProgrammePage
+);
 
 
 
@@ -150,19 +160,6 @@ router.post(
 
 
 
-// Create Programme
-router.get(
-  '/institutional/programmes/create',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.createProgrammeForm
-);
-router.post(
-  '/institutional/programmes/create',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.createProgramme
-);
 
 
 export default router;

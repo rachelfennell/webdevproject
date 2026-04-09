@@ -63,3 +63,4 @@ Improve
 9. Something about changing a users password? Inst admin cannot change password of academic admin
 10. Need admin page for each user to change their own password?
 11. Show programme name with capital letters/fix unique validation on db
+12. Inactive/active date for programme modules to show on tables

@@ -1,18 +1,87 @@
-<h3>Create Programme</h3>
-<% if (error) { %>
-  <div class="alert alert-danger"><%= error %></div>
-<% } %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create New Programme</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="#">HEdClass</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-<form method="POST" action="/institutional/programmes/create">
-  <input type="text" name="name" placeholder="Programme Name" class="form-control mb-2" required>
-  <input type="text" name="code" placeholder="Programme Code" class="form-control mb-2" required>
+ <div class="container">
+    <h2>Create New Programme</h2>
 
-  <label>Assign Academic Admin(s)</label>
-  <select name="adminIds" class="form-select mb-2" multiple>
-    <% admins.forEach(admin => { %>
-      <option value="<%= admin.id %>"><%= admin.first_name %> <%= admin.last_name %></option>
-    <% }) %>
-  </select>
 
-  <button class="btn btn-primary">Create</button>
-</form>
+    <form action="/institutional/createProgramme" method="POST">
+
+      <!-- name -->
+      <div class="mb-3">
+        <label class="form-label">Programme Name</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+
+      <!-- programme_code -->
+      <div class="mb-3">
+        <label class="form-label">Programme Code</label>
+        <input type="text" name="programme_code" class="form-control" required>
+      </div>
+
+      <!-- degree_type -->
+      <div class="mb-3">
+        <label class="form-label">Degree Type</label>
+        <input type="text" name="degree_type" class="form-control" required>
+      </div>
+
+      <!-- school -->
+      <div class="mb-3">
+        <label class="form-label">School</label>
+        <input type="text" name="school" class="form-control" required>
+      </div>
+
+     <!-- y2_weight -->
+      <div class="mb-3">
+        <label class="form-label">Y2 Weight</label>
+        <input type="text" name="y2_weight" class="form-control" required>
+      </div>
+
+  <!-- y3_weight -->
+      <div class="mb-3">
+        <label class="form-label">Y3 Weight</label>
+        <input type="text" name="y3_weight" class="form-control" required>
+      </div>
+
+        <!-- resit_cap -->
+      <div class="mb-3">
+        <label class="form-label">Resit Cap</label>
+        <input type="text" name="resit_cap" class="form-control" required>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn btn-primary">Create Programme</button>
+      <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
+
+    </form>
+  </div>
+
+</body>
+</html>
+
+
+
+
+
