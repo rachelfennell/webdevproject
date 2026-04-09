@@ -114,7 +114,13 @@ router.post(
   institutionalController.postEditProgrammePage
 );
 
-
+// Remove Module from Programme (Inactivate)
+router.post(
+  '/institutional/removeModule/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.removeModule
+);
 
 
 

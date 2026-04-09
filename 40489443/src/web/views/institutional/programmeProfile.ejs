@@ -85,10 +85,7 @@
                   <td><%= module.module_code %></td>
                   <td>Year <%= module.ProgrammeModule.year_level %></td>
                   <td><%= module.ProgrammeModule.credits %></td>
-
-
-
-       <td> <% if (module.ProgrammeModule.mandatory) { %>
+                      <td> <% if (module.ProgrammeModule.mandatory) { %>
                       <span class="badge bg-primary">Mandatory</span>
                     <% } else { %>
                       <span class="badge bg-secondary">Optional</span>

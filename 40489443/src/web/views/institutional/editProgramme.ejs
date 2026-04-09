@@ -84,6 +84,75 @@
 </form>
 
 
+    <div class="card shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Assigned Modules</h5>
+        <a href="/institutional/assignOfficer" class="btn btn-success btn-sm">+ Assign Module</a>
+      </div>
+      <div class="card-body">
+       <% if (programme.Modules && programme.Modules.length > 0) { %>
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+               <th>Module Name</th>
+          <th>Module Code</th>
+       <th>Year Level</th>
+                <th>Credits</th>
+                <th>Mandatory</th>
+          <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% programme.Modules.forEach(module => {  %>
+                <tr>
+                  td><%= module.name %></td>
+                  <td><%= module.module_code %></td>
+                  <td>Year <%= module.ProgrammeModule.year_level %></td>
+                  <td><%= module.ProgrammeModule.credits %></td>
+                      <td> <% if (module.ProgrammeModule.mandatory) { %>
+                      <span class="badge bg-primary">Mandatory</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">Optional</span>
+                    <% } %>
+
+                    <% if (module.ProgrammeModule.active) { %>
+                      <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">Inactive</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <form action="/institutional/removeModule/<%= programme.id %>" method="POST">
+                      <input type="hidden" name="moduleId" value="<%= module.id %>" />
+                      <button
+                        type="submit"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to unassign this module?')">
+                        Unassign
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <div class="alert alert-info mb-0">
+            No modules currently assigned to this programme.
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+      <button type="submit" class="btn btn-primary mt-3">Update Programme</button>
+    </form>
+
      
 
 

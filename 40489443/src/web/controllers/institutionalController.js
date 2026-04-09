@@ -301,7 +301,32 @@ export const postEditProgrammePage = async (req, res) => {
   }
 };
 
+// Remove Assigned module from programme 
+export const removeModule = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+    const { moduleId } = req.body;
 
+    const programmeModule = await programmeModule.findOne({
+      where: {
+        programme_id: programmeId,
+        module_id: moduleId
+      }
+    });
+
+    if (!programmeModule) {
+      return res.status(404).render('error', { message: 'Module not found for this programme.' });
+    }
+
+    programmeModule.active = false;
+    await programmeModule.save();
+
+    res.redirect(`/institutional/programmeProfile/${programmeId}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { message: 'Error removing module from programme' });
+  }
+};
 
 
 
