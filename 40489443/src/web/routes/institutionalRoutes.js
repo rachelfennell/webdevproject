@@ -137,17 +137,11 @@ router.post(
 );
 
 // Assign Programmes to Admin
-router.get(
-  '/institutional/assignProgramme/:id',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.getAssignProgramme
-);
 router.post(
   '/institutional/assignProgramme/:id',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.postAssignProgramme
+  institutionalController.assignProgramme
 );
 
 // Assign modules to programme

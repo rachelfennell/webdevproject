@@ -1,5 +1,6 @@
 
 import { User, Programme, UserProgramme, Module, ProgrammeModule } from '../../seeder/models/index.js';
+import sequelize from '../config/db.js';
 
 // Main Dashboard
 export const dashboard = async (req, res) => {
@@ -84,9 +85,22 @@ export const getEditAdminPage = async (req, res) => {
       return res.render('error', { message: 'Admin not found' });
     }
 
+     const activeProgrammes = await Programme.findAll({
+      where: { active: true },
+      include: {
+        model: User,
+        where: { id: {[sequelize.Op.ne]: adminId} }, //Search and exclude for programmes that don't have adminId
+required: false
+      }
+    });
+
+
+
+
     res.render('institutional/editAdmin', {
       user: req.session.user,
-      admin
+      admin,
+      activeProgrammes
     });
 
   } catch (err) {
@@ -150,48 +164,21 @@ export const removeProgramme = async (req, res) => {
   }
 };
 
-// Assign Programme to Admin 
-export const getAssignProgramme = async (req, res) => {
-  try {
-    const adminId = req.params.id;
-    const admin = await User.findByPk(adminId);
 
-    const programmes = await Programme.findAll({
-      where: { active: true }
-    });
-
-    if (!admin) {
-      return res.render('error', { message: 'Admin not found' });
-    }
-
-    res.render('institutional/editAdmin', {
-      user: req.session.user,
-      admin,
-      programmes
-    });
-  } catch (err) {
-    console.error(err);
-    res.render('error', { message: 'Unable to load assign programme page' });
-  }
-};
-
-
-export const postAssignProgramme = async (req, res) => {
+// Assign programme to user
+export const assignProgramme = async (req, res) => {
   try {
     const adminId = req.params.id;
     const { programmeId } = req.body;
 
-    // Check if the programme is already assigned to this admin
-    const existingAssignment = await UserProgramme.findOne({
-      where: {
-        user_id: adminId,
-        programme_id: programmeId,
-        active: true
-      }
-    });
+const admin = await User.findByPk(adminId);
+ if (!admin) {
+      return res.status(404).render('error', { message: 'Admin not found.' });
+    }
 
-    if (existingAssignment) {
-      return res.render('error', { message: 'This programme is already assigned to this admin.' });
+    const programme = await Programme.findByPk(programmeId);
+ if (!programme) {
+      return res.status(404).render('error', { message: 'Programme not found.' });
     }
 
     await UserProgramme.create({
