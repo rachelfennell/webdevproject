@@ -64,3 +64,6 @@ Improve
 10. Need admin page for each user to change their own password?
 11. Show programme name with capital letters/fix unique validation on db
 12. Inactive/active date for programme modules to show on tables
+13. Creating a new programme, y2/y3 weights need to be entered as 0.40/cannot be greater than 1. Change this somehow to percentage?
+14. When entering in resit cap, that cannot be 0.x like above, must be whole percentage number. either change to match above or vice versa
+15. Lets it create a new programme without degree_type or school being entered - enums. make these a drop down list with available enums
