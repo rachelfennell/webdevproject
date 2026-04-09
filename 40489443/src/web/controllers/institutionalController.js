@@ -307,7 +307,7 @@ export const removeModule = async (req, res) => {
     const programmeId = req.params.id;
     const { moduleId } = req.body;
 
-    const programmeModule = await programmeModule.findOne({
+    const programmeModule = await ProgrammeModule.findOne({
       where: {
         programme_id: programmeId,
         module_id: moduleId
