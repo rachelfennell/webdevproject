@@ -1,20 +1,95 @@
-<h3>Edit Programme</h3>
-<% if (error) { %>
-  <div class="alert alert-danger"><%= error %></div>
-<% } %>
+<!DOCTYPE html>
+<html lang="en">
 
-<form method="POST" action="/institutional/programmes/edit/<%= programme.id %>">
-  <input type="text" name="name" value="<%= programme.name %>" class="form-control mb-2" required>
-  <input type="text" name="code" value="<%= programme.code %>" class="form-control mb-2" required>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Academic Admins</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-  <label>Assign Academic Admin(s)</label>
-  <select name="adminIds" class="form-select mb-2" multiple>
-    <% admins.forEach(admin => { %>
-      <option value="<%= admin.id %>" <%= programme.admins.some(a => a.id === admin.id) ? 'selected' : '' %>>
-        <%= admin.first_name %> <%= admin.last_name %>
-      </option>
-    <% }) %>
-  </select>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="#">HEdClass</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="nav-link">Logged in as <%= user.first_name %>
+                <%= user.last_name %></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-  <button class="btn btn-primary">Update</button>
+  <div class="container">
+    <h1>Edit Programme: <%= programme.name %>
+    </h1>
+
+
+    <form action="/institutional/editProgramme/<%= programme.id %>" method="POST">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= programme.name %>" required />
+      </div>
+
+ <div class="form-group">
+        <label for="programme_code">Programme Code:</label>
+        <input type="text" class="form-control" id="programme_code" name="programme_code" value="<%= programme.programme_code %>" required />
+      </div>
+
+      <div class="form-group">
+        <label for="degree_type">Degree Type:</label>
+        <input type="text" class="form-control" id="degree_type" name="degree_type" value="<%= programme.degree_type %>"
+          required />
+      </div>
+
+      <div class="form-group">
+        <label for="school">school:</label>
+        <input type="text" class="form-control" id="school" name="school" value="<%= programme.school %>"
+          required />
+      </div>
+
+       <div class="form-group">
+        <label for="y2_weight">y2_weight:</label>
+        <input type="text" class="form-control" id="y2_weight" name="y2_weight" value="<%= programme.y2_weight %>"
+          required />
+      </div>
+
+       <div class="form-group">
+        <label for="y3_weight">y3_weight:</label>
+        <input type="text" class="form-control" id="y3_weight" name="y3_weight" value="<%= programme.y3_weight %>"
+          required />
+      </div>
+
+       <div class="form-group">
+        <label for="resit_cap">resit_cap:</label>
+        <input type="text" class="form-control" id="resit_cap" name="resit_cap" value="<%= programme.resit_cap %>"
+          required />
+      </div>
+
+      <div class="form-group">
+        <label for="active">Active:</label>
+        <input type="checkbox" id="active" name="active" value="on" <%=admin.active ? 'checked' : '' %> />
+      </div>
+
+<div>
+<form action="/institutional/editProgramme/<%= programme.id %>" method="POST">
+
+  <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
+
+
+     
+
+
+
+     
+
+</body>
+
+</html>

@@ -100,10 +100,19 @@ router.get(
   institutionalController.viewProgrammeProfile
 );
 
-
-
-
-
+// Edit Programme
+router.get(
+  '/institutional/editProgramme/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.getEditProgrammePage
+);
+router.post(
+  '/institutional/editProgramme/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.postEditProgrammePage
+);
 
 
 
@@ -149,18 +158,5 @@ router.post(
   institutionalController.createProgramme
 );
 
-// Edit Programme
-router.get(
-  '/institutional/programmes/edit/:id',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.editProgrammeForm
-);
-router.post(
-  '/institutional/programmes/edit/:id',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.editProgramme
-);
 
 export default router;
