@@ -1,6 +1,7 @@
 
 import { User, UserProgramme, Programme, ProgrammeModule, Student, Result, Module, Classification } from '../../seeder/models/index.js';
 import sequelize from '../config/db.js';
+import { Op } from 'sequelize';
 
 // Main Dashboard
 export const dashboard = async (req, res) => {
