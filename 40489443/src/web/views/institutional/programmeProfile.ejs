@@ -115,7 +115,7 @@
       </thead>
       <tbody>
         <% programme.Modules.forEach(module => { 
-          if (module.ProgrammeModule.inactive) { %> 
+          if (!module.ProgrammeModule.active) { %> 
             <tr>
               <td><%= module.name %></td>
               <td><%= module.module_code %></td>
