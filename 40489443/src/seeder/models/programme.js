@@ -87,7 +87,8 @@ const Programme = sequelize.define('Programme', {
   },
   date_created: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
+    allowNull: false
   }
 }, {
   tableName: 'programmes',
