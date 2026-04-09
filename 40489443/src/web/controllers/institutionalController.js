@@ -1,5 +1,5 @@
 
-import { User, Programme, UserProgramme } from '../../seeder/models/index.js';
+import { User, Programme, UserProgramme, Module, ProgrammeModule } from '../../seeder/models/index.js';
 
 // Main Dashboard
 export const dashboard = async (req, res) => {
@@ -221,9 +221,17 @@ export const viewProgrammeProfile = async (req, res) => {
       return res.render('error', { message: 'Programme not found' });
     }
 
+const moduleId = req.params.id;
+    const module = await Module.findByPk(moduleId);
+
+    if (!module) {
+      return res.render('error', { message: 'Module not found' });
+    }
+
     res.render('institutional/programmeProfile', {
       user: req.session.user,
-      programme
+      programme,
+      module
     });
 
   } catch (err) {
