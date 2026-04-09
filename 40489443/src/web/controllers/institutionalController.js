@@ -150,6 +150,65 @@ export const removeProgramme = async (req, res) => {
   }
 };
 
+// Assign Programme to Admin 
+export const getAssignProgramme = async (req, res) => {
+  try {
+    const adminId = req.params.id;
+    const admin = await User.findByPk(adminId);
+
+    const programmes = await Programme.findAll({
+      where: { active: true }
+    });
+
+    if (!admin) {
+      return res.render('error', { message: 'Admin not found' });
+    }
+
+    res.render('institutional/editAdmin', {
+      user: req.session.user,
+      admin,
+      programmes
+    });
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load assign programme page' });
+  }
+};
+
+
+export const postAssignProgramme = async (req, res) => {
+  try {
+    const adminId = req.params.id;
+    const { programmeId } = req.body;
+
+    // Check if the programme is already assigned to this admin
+    const existingAssignment = await UserProgramme.findOne({
+      where: {
+        user_id: adminId,
+        programme_id: programmeId,
+        active: true
+      }
+    });
+
+    if (existingAssignment) {
+      return res.render('error', { message: 'This programme is already assigned to this admin.' });
+    }
+
+    await UserProgramme.create({
+      user_id: adminId,
+      programme_id: programmeId,
+      assigned_date: new Date(),
+      active: true
+    });
+
+    return res.redirect(`/institutional/editAdmin/${adminId}`);
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Error assigning programme to admin' });
+  }
+};
+
+
 
 // Add New Academic Admin Page
 export const getCreateAdminPage = async (req, res) => {

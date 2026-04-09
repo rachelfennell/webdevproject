@@ -62,17 +62,44 @@
 
 <div>
 <form action="/institutional/editAdmin/<%= admin.id %>" method="POST">
-  <!-- all the input fields -->
+
   <button type="submit" class="btn btn-primary">Save Changes</button>
 </form>
-
 
       <!-- Assigned Programmes Table -->
     <div class="card shadow-sm">
       <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Assigned Programmes</h5>
-        <a href="/institutional/assignOfficer" class="btn btn-success btn-sm">+ Assign Programme</a>
+        <a href="/institutional/assignProgramme" class="btn btn-success btn-sm">+ Assign Programme</a>
       </div>
+
+    <div class="modal fade" id="assignProgramme" tabindex="-1" aria-labelledby="assignProgramme" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="assignProgrammeModalLabel">Select Programme to Assign</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/institutional/assignProgramme/<%= admin.id %>" method="POST">
+              <div class="form-group">
+                <label for="programmeId">Select Programme:</label>
+                <select id="programmeId" name="programmeId" class="form-control" required>
+                  <option value="">Select a Programme</option>
+                  <% programmes.forEach(programme => { %>
+                    <option value="<%= programme.id %>"><%= programme.name %> - <%= programme.programme_code %></option>
+                  <% }) %>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary mt-3">Assign Programme</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
       <div class="card-body">
         <% if (admin.Programmes && admin.Programmes.length > 0) { %>
           <table class="table table-hover align-middle">

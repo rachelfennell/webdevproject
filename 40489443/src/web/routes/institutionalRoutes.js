@@ -136,29 +136,21 @@ router.post(
   institutionalController.postCreateProgrammePage
 );
 
-
-
-
-
-
-
-
-
 // Assign Programmes to Admin
 router.get(
-  '/institutional/admins/assign/:adminId',
+  '/institutional/assignProgramme/:id',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.assignProgrammesForm
+  institutionalController.getAssignProgramme
 );
 router.post(
-  '/institutional/admins/assign/:adminId',
+  '/institutional/assignProgramme/:id',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.assignProgrammes
+  institutionalController.postAssignProgramme
 );
 
-
+// Assign modules to programme
 
 
 
