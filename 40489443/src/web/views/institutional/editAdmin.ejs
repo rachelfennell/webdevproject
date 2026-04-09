@@ -87,7 +87,7 @@
                 <label for="programmeId">Select Programme:</label>
                 <select id="programmeId" name="programmeId" class="form-control" required>
                   <option value="">Select a Programme</option>
-                  <% programme.forEach(programme => { %>
+                  <% admin.Programmes.forEach(programme => { %>
                     <option value="<%= programme.id %>"><%= programme.name %> - <%= programme.programme_code %></option>
                   <% }) %>
                 </select>
