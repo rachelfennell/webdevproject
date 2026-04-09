@@ -31,10 +31,39 @@
 <p>School: <%= programme.school %></p>
 </div>
 
+<div class="col-md-3">
+            <p class="text-muted mb-1">Status</p>
+            <% if (programme.active) { %>
+              <span class="badge bg-success">Active</span>
+            <% } else { %>
+              <span class="badge bg-secondary">Inactive</span>
+            <% } %>
+          </div>
+
+        <div class="row mt-2">
+          <div class="col-md-3">
+            <p class="text-muted mb-1">Year 2 Weight</p>
+            <p><%= (programme.y2_weight * 100).toFixed(0) %>%</p>
+          </div>
+          <div class="col-md-3">
+            <p class="text-muted mb-1">Year 3 Weight</p>
+            <p><%= (programme.y3_weight * 100).toFixed(0) %>%</p>
+          </div>
+          <div class="col-md-3">
+            <p class="text-muted mb-1">Resit Cap</p>
+            <p><%= programme.resit_cap %>%</p>
+          </div>
+        </div>
+
+
+
+
 <div>
   <h2>Modules</h2>
 
-  // Assigned
+  // Active Modules
+
+
   <% if (programme.Modules && programme.Modules.length > 0) { %>
     <h3>Currently Assigned Modules</h3>
     <table class="table">
@@ -42,6 +71,9 @@
         <tr>
           <th>Module Name</th>
           <th>Module Code</th>
+       <th>Year Level</th>
+                <th>Credits</th>
+                <th>Mandatory</th>
           <th>Status</th>
         </tr>
       </thead>
@@ -49,34 +81,46 @@
         <% programme.Modules.forEach(module => { 
           if (module.ProgrammeModule.active) { %> 
             <tr>
-              <td><%= module.name %></td>
-              <td><%= module.ProgrammeModule.module_code %></td>
-              <td>Active</td>
+         <td><%= module.name %></td>
+                  <td><%= module.module_code %></td>
+                  <td>Year <%= module.ProgrammeModule.year_level %></td>
+                  <td><%= module.ProgrammeModule.credits %></td>
+         <% if (module.ProgrammeModule.mandatory) { %>
+                      <span class="badge bg-primary">Mandatory</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">Optional</span>
+                    <% } %>
+                  </td>
+                  <td>Active</td>
             </tr>
         <% } }) %>
       </tbody>
     </table>
   <% } else { %>
-    <p>No programmes assigned to this admin.</p>
+    <p>No active modules assigned to this programme.</p>
   <% } %>
 
  // Unassigned
   <% if (programme.Modules && programme.Modules.length > 0) { %>
-    <h3>Unassigned Modules</h3>
+    <h3>Inactive Modules</h3>
     <table class="table">
       <thead>
         <tr>
           <th>Module Name</th>
           <th>Module Code</th>
+       <th>Year Level</th>
+                <th>Credits</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
         <% programme.Modules.forEach(module => { 
-          if (module.ProgrammeModule.active) { %> 
+          if (module.ProgrammeModule.inactive) { %> 
             <tr>
               <td><%= module.name %></td>
-              <td><%= module.ProgrammeModule.module_code %></td>
+              <td><%= module.module_code %></td>
+              <td>Year <%= module.ProgrammeModule.year_level %></td>
+                  <td><%= module.ProgrammeModule.credits %></td>
               <td>Inactive</td>
             </tr>
         <% } }) %>

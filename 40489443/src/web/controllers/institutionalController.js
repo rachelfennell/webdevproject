@@ -205,28 +205,32 @@ export const getCreateAdminPage = async (req, res) => {
   };
 
 // View Programme Profiles Page
-  export const viewProgrammeProfile = async (req, res) => {
-    try {
-      const programmeId = req.params.id;
-      const programme = await Programme.findByPk(programmeId, {
-        include: {
-          model: Module,
-          through: { attributes: ['name', 'module_code', 'active'] },
+export const viewProgrammeProfile = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+    const programme = await Programme.findByPk(programmeId, {
+      include: {
+        model: Module,
+        through: { 
+          attributes: ['year_level', 'mandatory', 'credits', 'active'] 
         }
-      });
+      }
+    });
 
-      res.render('institutional/programmeProfile', {
-        user: req.session.user,
-        programme,
-        modules: programme.modules
-      });
-
-    } catch (err) {
-      console.error(err);
-      res.render('error', { message: 'Unable to load Programme Profile' });
+    if (!programme) {
+      return res.render('error', { message: 'Programme not found' });
     }
-  };
 
+    res.render('institutional/programmeProfile', {
+      user: req.session.user,
+      programme
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load Programme Profile' });
+  }
+};
 
 
 
