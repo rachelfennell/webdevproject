@@ -13,101 +13,10 @@ router.get(
   academicController.dashboard
 );
 
-//View student
+// Programme Dashboard
 router.get(
-  '/academic/students',
+  '/academic/programmeDashboard',
   isAuthenticated,
   isAcademicAdmin,
-  academicController.viewStudents
+  academicController.programmeDashboard
 );
-
-// Add student
-router.get(
-  '/academic/students/add',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.addStudentForm
-);
-
-router.post(
-  '/academic/students/add',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.addStudent
-);
-
-// Edit students
-router.get(
-  '/academic/students/edit/:studentId',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.editStudentForm
-);
-
-router.post(
-  '/academic/students/edit/:studentId',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.editStudent
-);
-
-//Manage student results
-router.get(
-  '/academic/students/:studentId/results',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.viewResults
-);
-
-router.get(
-  '/academic/students/:studentId/results/add',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.addResultForm
-);
-
-router.post(
-  '/academic/students/:studentId/results/add',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.addResult
-);
-
-router.get(
-  '/academic/students/:studentId/results/edit/:resultId',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.editResultForm
-);
-
-router.post(
-  '/academic/students/:studentId/results/edit/:resultId',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.editResult
-);
-
-// See student details
-router.get(
-  '/academic/students/:studentId/details',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.studentDetails
-);
-
-// Override classification
-router.get(
-  '/academic/students/:studentId/override',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.overrideClassificationForm
-);
-
-router.post(
-  '/academic/students/:studentId/override',
-  isAuthenticated,
-  isAcademicAdmin,
-  academicController.overrideClassification
-);
-
-export default router;
