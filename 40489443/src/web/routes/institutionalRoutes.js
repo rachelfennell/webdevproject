@@ -102,7 +102,7 @@ router.post(
 
 // View all Programmes
 router.get(
-  '/institutional/programmes',
+  '/institutional/manageProgrammes',
   isAuthenticated,
   isInstitutionalAdmin,
   institutionalController.viewProgrammes
