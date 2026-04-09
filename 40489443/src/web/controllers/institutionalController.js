@@ -305,9 +305,19 @@ export const getEditProgrammePage = async (req, res) => {
 
     if (!programme) return res.render('error', { message: 'Programme not found' });
 
+const activeModules = await Module.findAll({
+  where : {active: true},
+  include: {
+    model: Programme,
+    where: {id: {[Op.ne]: programmeId}},
+    required: false
+  }
+})
+
     res.render('institutional/editProgramme', {
       user: req.session.user,
       programme,
+      activeModules
     });
 
   } catch (err) {
@@ -342,6 +352,66 @@ export const postEditProgrammePage = async (req, res) => {
     res.render('error', { message: 'Unable to update programme' });
   }
 };
+
+// Assign Module to Programme
+export const assignModule = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+    const { moduleId, year_level, mandatory, credits  } = req.body;
+
+const programme = await Programme.findByPk(programmeId);
+ if (!programme) {
+      return res.status(404).render('error', { message: 'Programme not found.' });
+    }
+
+    const module = await Module.findByPk(moduleId);
+ if (!module) {
+      return res.status(404).render('error', { message: 'Module not found.' });
+    }
+
+    await ProgrammeModule.create({
+      programme_id: programmeId,
+      module_id: moduleId,
+      year_level,
+      mandatory,
+      credits,
+      active: true
+    });
+
+    return res.redirect(`/institutional/editProgramme/${programmeId}`);
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Error assigning module to programme' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Remove Assigned module from programme 
 export const removeModule = async (req, res) => {
@@ -439,35 +509,5 @@ export const postCreateProgrammePage = async (req, res) => {
 
 
 
-// Assign Programme
-export const assignProgrammesForm = async (req, res) => {
-  try {
-    const admin = await User.findByPk(req.params.adminId);
-    const programmes = await Programme.findAll();
-    if (!admin) return res.render('error', { message: 'Admin not found' });
-
-
-    res.render('institutional/assignProgrammes', { user: req.session.user, admin, programmes, error: null });
-  } catch (err) {
-    console.error(err);
-    res.render('error', { message: 'Unable to load assignment form' });
-  }
-};
-
-export const assignProgrammes = async (req, res) => {
-  try {
-    const admin = await User.findByPk(req.params.adminId);
-    if (!admin) return res.render('error', { message: 'Admin not found' });
-
-    const { programmeIds } = req.body; // array of programme IDs
-    // TODO: Save assignments to DB (e.g., through a junction table AdminProgramme)
-    // Example: await admin.setProgrammes(programmeIds);
-
-    res.redirect('/institutional/admins');
-  } catch (err) {
-    console.error(err);
-    res.render('error', { message: 'Unable to assign programmes' });
-  }
-};
 
 

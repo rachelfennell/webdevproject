@@ -145,6 +145,12 @@ router.post(
 );
 
 // Assign modules to programme
+router.post(
+  '/institutional/assignModule/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.assignModule
+);
 
 
 
