@@ -75,6 +75,39 @@ router.post(
   institutionalController.postCreateAdminPage
 );
 
+// View Programmes Dashboard
+router.get(
+  '/institutional/manageProgrammes',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.manageProgrammes
+);
+
+
+// View all Programmes
+router.get(
+  '/institutional/viewProgrammes',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.viewProgrammes
+);
+
+// View Programmes Profile Page
+router.get(
+  '/institutional/programmeProfile/:id',
+  isAuthenticated,
+  isInstitutionalAdmin,
+  institutionalController.viewProgrammeProfile
+);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -100,13 +133,7 @@ router.post(
   institutionalController.assignProgrammes
 );
 
-// View all Programmes
-router.get(
-  '/institutional/manageProgrammes',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.viewProgrammes
-);
+
 
 // Create Programme
 router.get(

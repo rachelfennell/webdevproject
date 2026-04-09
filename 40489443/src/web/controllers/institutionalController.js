@@ -182,6 +182,54 @@ export const getCreateAdminPage = async (req, res) => {
   }
 };
 
+  // View Programmes Dashboard
+  export const manageProgrammes = async (req, res) => {
+    try {
+      const programmes = await Programme.findAll();
+      res.render('institutional/manageProgrammes', { user: req.session.user, programmes });
+    } catch (err) {
+      console.error(err);
+      res.render('error', { message: 'Unable to load programmes' });
+    }
+  };
+
+// View All Programmes
+  export const viewProgrammes = async (req, res) => {
+    try {
+      const programmes = await Programme.findAll();
+      res.render('institutional/viewProgrammes', { user: req.session.user, programmes });
+    } catch (err) {
+      console.error(err);
+      res.render('error', { message: 'Unable to load programmes' });
+    }
+  };
+
+// View Programme Profiles Page
+  export const viewProgrammeProfile = async (req, res) => {
+    try {
+      const programmeId = req.params.id;
+      const programme = await Programme.findByPk(programmeId, {
+        include: {
+          model: Module,
+          through: { attributes: ['name', 'module_code', 'active'] },
+        }
+      });
+
+      res.render('institutional/programmeProfile', {
+        user: req.session.user,
+        programme,
+        modules: programme.modules
+      });
+
+    } catch (err) {
+      console.error(err);
+      res.render('error', { message: 'Unable to load Programme Profile' });
+    }
+  };
+
+
+
+
 
 
 
@@ -226,16 +274,6 @@ export const getCreateAdminPage = async (req, res) => {
     }
   };
 
-  // View Programmes
-  export const viewProgrammes = async (req, res) => {
-    try {
-      const programmes = await Programme.findAll();
-      res.render('institutional/manageProgrammes', { user: req.session.user, programmes });
-    } catch (err) {
-      console.error(err);
-      res.render('error', { message: 'Unable to load programmes' });
-    }
-  };
 
   // Create Programme
   export const createProgrammeForm = (req, res) => {
