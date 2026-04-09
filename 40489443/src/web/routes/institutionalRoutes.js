@@ -60,65 +60,28 @@ router.post(
   institutionalController.removeProgramme
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Create New Academic Admin Page
 router.get(
   '/institutional/createAdmin',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.createAdminPage
-);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Add Academic Admin
-router.get(
-  '/institutional/admins/add',
-  isAuthenticated,
-  isInstitutionalAdmin,
-  institutionalController.addAdminForm
+  institutionalController.getCreateAdminPage
 );
 
 router.post(
-  '/institutional/admins/add',
+  '/institutional/createAdmin',
   isAuthenticated,
   isInstitutionalAdmin,
-  institutionalController.addAdmin
+  institutionalController.postCreateAdminPage
 );
+
+
+
+
+
+
+
+
 
 
 

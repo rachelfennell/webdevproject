@@ -60,3 +60,5 @@ Improve
 6. Add in unassigned date for admins
 7. Some notification to say that change has been made when editing
 8. Fix error page 
+9. Something about changing a users password? Inst admin cannot change password of academic admin
+10. Need admin page for each user to change their own password?

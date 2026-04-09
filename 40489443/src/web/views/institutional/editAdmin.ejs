@@ -61,43 +61,71 @@
       </div>
 
 <div>
-  <h2>Assigned Programmes</h2>
-  <% if (admin.Programmes && admin.Programmes.length > 0) { %>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Programme Name</th>
-          <th>Assigned Date</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% admin.Programmes.forEach(programme => { %>
-          <tr>
-            <td><%= programme.name %></td>
-            <td><%= programme.UserProgramme.assigned_date %></td>
-            <td><%= programme.UserProgramme.active ? 'Active' : 'Inactive' %></td>
-            <td>
-            
-              <form action="/institutional/removeProgramme/<%= admin.id %>" method="POST">
-                <input type="hidden" name="programmeId" value="<%= programme.id %>" />
-                <button type="submit" class="btn btn-danger">Unassign</button>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  <% } else { %>
-    <p>No programmes assigned to this admin.</p>
-  <% } %>
-</div>
+<form action="/institutional/editAdmin/<%= admin.id %>" method="POST">
+  <!-- all the input fields -->
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
 
 
+      <!-- Assigned Programmes Table -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Assigned Programmes</h5>
+        <a href="/institutional/assignOfficer" class="btn btn-success btn-sm">+ Assign Programme</a>
+      </div>
+      <div class="card-body">
+        <% if (admin.Programmes && admin.Programmes.length > 0) { %>
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Programme Name</th>
+                <th>Programme Code</th>
+                <th>Degree Type</th>
+                <th>Assigned Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% admin.Programmes.forEach(programme => { %>
+                <tr>
+                  <td><%= programme.name %></td>
+                  <td><%= programme.programme_code %></td>
+                  <td><%= programme.degree_type %></td>
+                  <td>
+                    <%= new Date(programme.UserProgramme.assigned_date).toLocaleDateString('en-GB') %>
+                  </td>
+                  <td>
+                    <% if (programme.UserProgramme.active) { %>
+                      <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">Inactive</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <form action="/institutional/removeProgramme/<%= admin.id %>" method="POST">
+                      <input type="hidden" name="programmeId" value="<%= programme.id %>" />
+                      <button
+                        type="submit"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Are you sure you want to unassign this programme?')">
+                        Unassign
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } else { %>
+          <div class="alert alert-info mb-0">
+            No programmes currently assigned to this admin.
+          </div>
+        <% } %>
+      </div>
+    </div>
 
-
-
+  </div>
 
 
 

@@ -71,10 +71,11 @@ export const getEditAdminPage = async (req, res) => {
     const adminId = req.params.id;
    
     const admin = await User.findByPk(adminId, {
-      where: { role: 'academic_admin' },
       include: {
         model: Programme,
-        through: { attributes: ['assigned_date', 'active'] }
+        through: { 
+          attributes: ['assigned_date', 'active'],
+        where: {active: true}}
       } });
 
     if (!admin) {
@@ -82,8 +83,7 @@ export const getEditAdminPage = async (req, res) => {
 
       res.render('institutional/editAdmin', {
         user: req.session.user,
-        admin,
-        programmes: admin.programmes
+        admin
       });
     
   } catch (err) {
@@ -119,7 +119,7 @@ export const postAdminPage = async (req, res) => {
   }
 };
 
-// Remove Assigned Programme from Admin (Mark Active: False - Audit Log)
+// Remove Assigned Programme from Admin 
 export const removeProgramme = async (req, res) => {
   try {
     const adminId = req.params.id;  
@@ -144,39 +144,11 @@ export const removeProgramme = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Add New Academic Admin Page
-export const createAdminPage = async (req, res) => {
+export const getCreateAdminPage = async (req, res) => {
   try {
-    const admins = await User.findAll({ where: { role: 'academic_admin' } });
-    res.render('institutional/createAdmin', { user: req.session.user, admins });
+    res.render('institutional/createAdmin', { user: req.session.user});
+
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to load ' });
@@ -184,29 +156,41 @@ export const createAdminPage = async (req, res) => {
 };
 
 
-
   // Add Academic Admin 
-  export const addAdminForm = async (req, res) => {
-    res.render('institutional/addAdmin', { user: req.session.user, error: null });
-  };
+  export const postCreateAdminPage = async (req, res) => {
 
-  export const addAdmin = async (req, res) => {
-    const { username, first_name, last_name, password } = req.body;
-    try {
-      await User.create({
-        username,
-        first_name,
-        last_name,
-        password,
-        role: 'academic_admin',
-        active: true
-      });
-      res.redirect('/institutional/admins');
-    } catch (err) {
-      console.error(err);
-      res.render('institutional/addAdmin', { user: req.session.user, error: 'Error creating admin' });
-    }
-  };
+  const { username, first_name, last_name, password, email } = req.body;
+
+  try {
+    const newAdmin = User.build({
+      username,
+      first_name,
+      last_name,
+      email,
+      role: 'academic_admin',
+      active: true
+    });
+
+    await newAdmin.setPassword(password); // hash password
+    await newAdmin.save();
+
+    res.redirect('/institutional/manageAdmins');
+
+  } catch (err) {
+    console.error(err);
+   res.render('error', { message: 'Unable to load ' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
 
 
 
