@@ -95,9 +95,6 @@ required: false
       }
     });
 
-
-
-
     res.render('institutional/editAdmin', {
       user: req.session.user,
       admin,
