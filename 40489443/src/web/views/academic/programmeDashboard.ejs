@@ -23,7 +23,8 @@
     </div>
   </nav>
 
-  <div class="container">
+<div class="container">
+
     <header class="my-4">
       <h1><%= programme.name %> Profile</h1>
       <p>Programme Code: <%= programme.programme_code %></p>
@@ -31,7 +32,10 @@
       <p>School: <%= programme.school %></p>
     </header>
 
-    <!-- Status Badge -->
+    <div class="mt-3 mb-4">
+  <a href="/academic/editProgramme/<%= programme.id %>" class="btn btn-primary">Edit Programme</a>
+</div>
+
     <div class="col-md-3">
       <p class="text-muted mb-1">Status</p>
       <% if (programme.active) { %>
@@ -41,7 +45,6 @@
       <% } %>
     </div>
 
-    <!-- Weights and Resit Cap -->
     <div class="row mt-2">
       <div class="col-md-3">
         <p class="text-muted mb-1">Year 2 Weight</p>
@@ -57,23 +60,20 @@
       </div>
     </div>
 
-
+    // Programme Active Student Information 
     <div class="mt-4">
       <h2>Student Information</h2>
-      <p><strong>Number of Students Assigned:</strong> <%= programme.studentsAssigned.length %></p>
-      <a href="/academic/programmeStudentList/<%= programme.id %>" class="btn btn-primary">View Student List</a>
+      <p><strong>Number of Active Students:</strong> <%= students.length %></p>
+      <a href="/academic/programmeStudentList/<%= programme.id %>" class="btn btn-primary">
+        View Student List
+      </a>
     </div>
 
-
-
-
-    <!-- Modules Section -->
-    <div>
+    // Active Modules 
+    <div class="mt-4">
       <h2>Modules</h2>
-      
-      <!-- Active Modules -->
+      <h3>Currently Assigned Modules</h3>
       <% if (programme.Modules && programme.Modules.length > 0) { %>
-        <h3>Currently Assigned Modules</h3>
         <table class="table">
           <thead>
             <tr>
@@ -86,8 +86,8 @@
             </tr>
           </thead>
           <tbody>
-            <% programme.Modules.forEach(module => { 
-              if (module.ProgrammeModule.active) { %> 
+            <% programme.Modules.forEach(module => { %>
+              <% if (module.ProgrammeModule.active) { %>
                 <tr>
                   <td><%= module.name %></td>
                   <td><%= module.module_code %></td>
@@ -102,16 +102,18 @@
                   </td>
                   <td>Active</td>
                 </tr>
-            <% } }) %>
+              <% } %>
+            <% }) %>
           </tbody>
         </table>
       <% } else { %>
         <p>No active modules assigned to this programme.</p>
       <% } %>
 
-      <!-- Inactive Modules -->
-      <% if (programme.Modules && programme.Modules.length > 0) { %>
-        <h3>Inactive Modules</h3>
+      //Inactive Modules 
+      <h3>Inactive Modules</h3>
+      <% const inactiveModules = programme.Modules ? programme.Modules.filter(m => !m.ProgrammeModule.active) : [] %>
+      <% if (inactiveModules.length > 0) { %>
         <table class="table">
           <thead>
             <tr>
@@ -123,26 +125,26 @@
             </tr>
           </thead>
           <tbody>
-            <% programme.Modules.forEach(module => { 
-              if (!module.ProgrammeModule.active) { %> 
-                <tr>
-                  <td><%= module.name %></td>
-                  <td><%= module.module_code %></td>
-                  <td>Year <%= module.ProgrammeModule.year_level %></td>
-                  <td><%= module.ProgrammeModule.credits %></td>
-                  <td>Inactive</td>
-                </tr>
-            <% } }) %>
+            <% inactiveModules.forEach(module => { %>
+              <tr class="text-muted">
+                <td><%= module.name %></td>
+                <td><%= module.module_code %></td>
+                <td>Year <%= module.ProgrammeModule.year_level %></td>
+                <td><%= module.ProgrammeModule.credits %></td>
+                <td>Inactive</td>
+              </tr>
+            <% }) %>
           </tbody>
         </table>
       <% } else { %>
-        <p>No inactive modules assigned to this programme.</p>
+        <p>No inactive modules.</p>
       <% } %>
     </div>
 
     <footer class="mt-4">
-      <a href="/dashboard" class="btn btn-secondary">Back to Home</a>
+      <a href="/academic/dashboard" class="btn btn-secondary">Back to Dashboard</a>
     </footer>
+
   </div>
 
 </body>

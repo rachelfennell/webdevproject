@@ -25,42 +25,61 @@
 
 <div class="container">
     <header class="my-4">
-      <h1>Welcome, <%= userName %>!</h1>
+      <h1>Welcome, <%= user.first_name %> <%= user.last_name %>!</h1>
     </header>
 
     <h2>Your Assigned Programmes</h2>
     
+    <p class="text-muted mb-0">Classification Officer Dashboard</p>
+      </div>
+      <a href="/academic/studentList" class="btn btn-primary">View All Students</a>
+    </div>
+
+    <%# Message if no programmes assigned %>
     <% if (message) { %>
-        <div class="alert alert-danger"><%= message %></div>
+      <div class="alert alert-info"><%= message %></div>
     <% } %>
 
+    <%# Programmes table %>
     <% if (programmes && programmes.length > 0) { %>
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Programme Name</th>
-                    <th>Programme Code</th>
-                    <th>Actions</th> <
-                </tr>
+      <div class="card shadow-sm">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Your Assigned Programmes</h5>
+        </div>
+        <div class="card-body p-0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Programme Name</th>
+                <th>Programme Code</th>
+                <th>Degree Type</th>
+                <th>School</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody>
-                <% programmes.forEach(userProgramme => { %>
-                    <tr>
-                        <td><%= userProgramme.Programme.name %></td>
-                        <td><%= userProgramme.Programme.programme_code %></td>
-                        <td>
-    
-    <a href="/programmeDashboard/<%= userProgramme.Programme.id %>" class="btn btn-info btn-sm">More Info</a>
-</td>
-                    </tr>
-                <% }) %>
+              <% programmes.forEach(userProgramme => { %>
+                <tr>
+                  <td><%= userProgramme.Programme.name %></td>
+                  <td><%= userProgramme.Programme.programme_code %></td>
+                  <td><%= userProgramme.Programme.degree_type %></td>
+                  <td><%= userProgramme.Programme.school %></td>
+                  <td>
+                    <a href="/academic/programmeDashboard/<%= userProgramme.Programme.id %>" 
+                       class="btn btn-info btn-sm">
+                      View Programme
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
             </tbody>
-        </table>
-    <% } else { %>
-        <p>You are not assigned to any programmes.</p>
+          </table>
+        </div>
+      </div>
     <% } %>
+
   </div>
 
- 
+
 </body>
 </html>
