@@ -122,9 +122,27 @@ router.post(
   academicController.postEditResultsPage
 );
 
+// Generate Students Classification Page
+router.get(
+  '/academic/classification/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.getClassificationPage
+);
 
+router.post(
+  '/academic/classification/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postClassificationPage
+);
 
-
-
+// Manually Override Student Classification
+router.post(
+  '/academic/classificationOverride/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postOverrideClassification
+);
 
 export default router;

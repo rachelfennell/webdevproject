@@ -2,6 +2,7 @@
 import { User, UserProgramme, Programme, ProgrammeModule, Student, Result, Module, Classification } from '../../seeder/models/index.js';
 import sequelize from '../config/db.js';
 import { Op } from 'sequelize';
+import { classifyStudent } from '../utils/classificationEngine.js';
 
 //Method to calculate students overall mark
 const getOverallMark = (moduleId, results, resitCap) => {
@@ -231,9 +232,6 @@ export const programmeDashboard = async (req, res) => {
       where: { programme_id: programmeId, active_student: true },
       include: { model: Result }
     });
-
-    console.log('Results for first student:', JSON.stringify(students[0]?.Results, null, 2));
-console.log('Pass mark:', programme.pass_mark);
 
     res.render('academic/programmeDashboard', {
       user: req.session.user,
@@ -551,5 +549,134 @@ export const postEditResultsPage = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to save results' });
+  }
+};
+
+// Students Degree Classification Page
+export const getClassificationPage = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    const student = await Student.findByPk(studentId, {
+      include: [
+        { model: Programme },
+        {
+          model: Result,
+          include: { model: Module, attributes: ['id', 'name', 'module_code'] }
+        },
+        { model: Classification }
+      ]
+    });
+
+    if (!student) return res.render('error', { message: 'Student not found' });
+
+    const programmeModules = await ProgrammeModule.findAll({
+      where: { programme_id: student.programme_id, active: true }
+    });
+
+    student.Results.forEach(r => {
+      const pm = programmeModules.find(pm => pm.module_id === r.module_id);
+      r.Module.credits = pm ? pm.credits : 0;
+    });
+
+    res.render('academic/classificationPage', {
+      user: req.session.user,
+      student,
+      classification: student.Classification || null
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load classification page' });
+  }
+};
+
+export const postClassificationPage = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    const student = await Student.findByPk(studentId, {
+      include: [
+        { model: Programme },
+        {
+          model: Result,
+          include: { model: Module, attributes: ['id', 'name', 'module_code'] }
+        }
+      ]
+    });
+
+    if (!student) return res.render('error', { message: 'Student not found' });
+
+    const programmeModules = await ProgrammeModule.findAll({
+      where: { programme_id: student.programme_id, active: true }
+    });
+
+    student.Results.forEach(r => {
+      const pm = programmeModules.find(pm => pm.module_id === r.module_id);
+      r.Module.credits = pm ? pm.credits : 0;
+    });
+
+    const result = classifyStudent(student.Results, student.Programme);
+
+    const classification = await Classification.findOne({ where: { student_id: studentId } });
+
+    if (classification) {
+      classification.y2_average = result.eligible ? result.y2_average : null;
+      classification.y3_average = result.eligible ? result.y3_average : null;
+      classification.final_average = result.eligible ? result.final_average : null;
+      classification.proposed_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
+      classification.final_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
+      classification.is_overridden = false;
+      classification.rationale = result.eligible ? null : result.reason;
+      classification.classified_by = req.session.user.id;
+      classification.classified_at = new Date();
+      await classification.save();
+    } else {
+      await Classification.create({
+        student_id: studentId,
+        classified_by: req.session.user.id,
+        y2_average: result.eligible ? result.y2_average : null,
+        y3_average: result.eligible ? result.y3_average : null,
+        final_average: result.eligible ? result.final_average : null,
+        proposed_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
+        final_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
+        is_overridden: false,
+        rationale: result.eligible ? null : result.reason
+      });
+    }
+
+    return res.redirect(`/academic/classification/${studentId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to run classification' });
+  }
+};
+
+// Manually Override Classification
+export const postOverrideClassification = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const { final_outcome, rationale } = req.body;
+
+    const classification = await Classification.findOne({
+      where: { student_id: studentId }
+    });
+
+    if (!classification) return res.render('error', { message: 'No classification found for this student' });
+
+    classification.final_outcome = final_outcome;
+    classification.rationale = rationale;
+    classification.is_overridden = true;
+    classification.classified_by = req.session.user.id;
+    classification.classified_at = new Date();
+
+    await classification.save();
+
+    return res.redirect(`/academic/classification/${studentId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to override classification' });
   }
 };

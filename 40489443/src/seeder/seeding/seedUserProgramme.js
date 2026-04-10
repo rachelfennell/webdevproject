@@ -1,14 +1,30 @@
+// seeder/seeding/seedUserProgramme.js
 export async function up(queryInterface) {
-  const userProgrammes = [
-    { user_id: 1, programme_id: 1, assigned_date: new Date('2022-09-01'), active: true },
-    { user_id: 1, programme_id: 2, assigned_date: new Date('2022-09-01'), active: true },
-    { user_id: 1, programme_id: 3, assigned_date: new Date('2021-09-01'), active: true },
-    { user_id: 1, programme_id: 4, assigned_date: new Date('2021-09-01'), active: true },
-    { user_id: 3, programme_id: 5, assigned_date: new Date('2023-01-01'), active: true },
-    { user_id: 3, programme_id: 6, assigned_date: new Date('2023-01-01'), active: true },
-  ];
-
-  await queryInterface.bulkInsert('user_programmes', userProgrammes, {});
+  await queryInterface.bulkInsert('user_programmes', [
+    // Carol (id:3) assigned to programmes 1 and 2
+    {
+      user_id: 3,
+      programme_id: 1,
+      assigned_date: new Date('2023-01-15'),
+      active: true
+    },
+    {
+   
+      user_id: 3,
+      programme_id: 2,
+      assigned_date: new Date('2023-01-15'),
+      active: true
+    },
+    // David (id:4) assigned to programme 3 only
+    {
+ 
+      user_id: 4,
+      programme_id: 3,
+      assigned_date: new Date('2023-01-15'),
+      active: true
+    }
+    // Programme 4 has no officer assigned
+  ], {});
 }
 
 export async function down(queryInterface) {

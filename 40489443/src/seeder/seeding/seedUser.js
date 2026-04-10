@@ -1,55 +1,55 @@
+// seeder/seeding/seedUser.js
 import bcrypt from 'bcrypt';
 
 export async function up(queryInterface) {
-  
-  const users = [
+  const password = await bcrypt.hash('password1234', 10);
+
+  await queryInterface.bulkInsert('users', [
     {
       id: 1,
-      username: 'jdoe',
-      password_hash: await bcrypt.hash('password1234', 10),
-      role: 'academic_admin',
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'jdoe@hedemo.co.uk',
-      active: true,
-      date_created: new Date('2022-01-01')
-    },
-    {
-      id: 2,
       username: 'asmith',
-      password_hash: await bcrypt.hash('password1234', 10),
+      password_hash: password,
       role: 'institutional_admin',
       first_name: 'Alice',
       last_name: 'Smith',
       email: 'asmith@hedemo.co.uk',
       active: true,
-      date_created: new Date('2022-01-02')
+      date_created: new Date('2023-01-01')
+    },
+    {
+      id: 2,
+      username: 'bjones',
+      password_hash: password,
+      role: 'institutional_admin',
+      first_name: 'Bob',
+      last_name: 'Jones',
+      email: 'bjones@hedemo.co.uk',
+      active: true,
+      date_created: new Date('2023-01-01')
     },
     {
       id: 3,
-      username: 'bwilson',
-      password_hash: await bcrypt.hash('password1234', 10),
+      username: 'cmurphy',
+      password_hash: password,
       role: 'academic_admin',
-      first_name: 'Bob',
-      last_name: 'Wilson',
-      email: 'bwilson@hedemo.co.uk',
+      first_name: 'Carol',
+      last_name: 'Murphy',
+      email: 'cmurphy@hedemo.co.uk',
       active: true,
-      date_created: new Date('2022-01-03')
+      date_created: new Date('2023-01-01')
     },
     {
       id: 4,
-      username: 'cjones',
-      password_hash: await bcrypt.hash('password1234', 10),
-      role: 'institutional_admin',
-      first_name: 'Carol',
-      last_name: 'Jones',
-      email: 'cjones@hedemo.co.uk',
+      username: 'dwilson',
+      password_hash: password,
+      role: 'academic_admin',
+      first_name: 'David',
+      last_name: 'Wilson',
+      email: 'dwilson@hedemo.co.uk',
       active: true,
-      date_created: new Date('2022-01-04')
+      date_created: new Date('2023-01-01')
     }
-  ];
-
-  await queryInterface.bulkInsert('users', users, {});
+  ], {});
 }
 
 export async function down(queryInterface) {

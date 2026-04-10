@@ -1,10 +1,7 @@
 Important Things Left!
-1. Classification logic for entire site! 
 2. Add something to do with classifications on programme dashboard
 3. Potentially figure out the audit log stuff? 
-4. Need to update all the seeder files to have more data
 5. API?
-6. Can only access final yesr students so change graduation year to all the same!!
 7. Need search features for students etc
 8. Charts and tables
 9. Security stuff
@@ -35,3 +32,4 @@ Improve
 21. Have students modules organised by module code 
 22. Change all the dates to just show the date and not time
 23. Change colours of everything and backgrounds etc
+24. Move overall mark stuff to utils folder

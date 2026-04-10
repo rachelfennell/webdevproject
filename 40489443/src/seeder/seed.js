@@ -24,6 +24,9 @@ const runSeed = sequelize.getQueryInterface();
 // Seeding
 const seed = async () => {
   try {
+      await sequelize.sync({ alter: true });
+    console.log('All tables synced successfully.');
+
     console.log('Seeding users');
     await seedUsers(runSeed);
 
@@ -44,12 +47,6 @@ const seed = async () => {
 
     console.log('Seeding results');
     await seedResults(runSeed);
-
-    console.log('Seeding classifications');
-    await seedClassifications(runSeed);
-
-    console.log('Seeding audit log');
-    await seedAuditLog(runSeed);
 
     console.log('All data seeded successfully.');
 

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classification | HEdClass</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="/academic/dashboard">HEdClass</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1>Classification</h1>
+        <p class="text-muted mb-0">
+          <%= student.first_name %> <%= student.last_name %>
+          (<%= student.student_number %>) —
+          <%= student.Programme.name %>
+        </p>
+      </div>
+      <a href="/academic/studentProfile/<%= student.id %>" class="btn btn-secondary">
+        Back to Student Profile
+      </a>
+    </div>
+
+    <%# Run Classification %>
+    <div class="card mb-4">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Run Classification</h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">Click the button below to run the classification engine for this student based on their current results.</p>
+        <form action="/academic/classification/<%= student.id %>" method="POST">
+          <button type="submit" class="btn btn-primary"
+            onclick="return confirm('Are you sure you want to run the classification for this student?')">
+            Run Classification
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <%# Classification Result %>
+    <% if (classification) { %>
+
+      <div class="card mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Classification Result</h5>
+          <% if (classification.is_overridden) { %>
+            <span class="badge bg-warning text-dark">Manually Overridden</span>
+          <% } else { %>
+            <span class="badge bg-success">System Generated</span>
+          <% } %>
+        </div>
+        <div class="card-body">
+
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Year 2 Average</p>
+              <p><%= classification.y2_average !== null ? classification.y2_average + '%' : '—' %></p>
+            </div>
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Year 3 Average</p>
+              <p><%= classification.y3_average !== null ? classification.y3_average + '%' : '—' %></p>
+            </div>
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Final Average</p>
+              <p><%= classification.final_average !== null ? classification.final_average + '%' : '—' %></p>
+            </div>
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Proposed Outcome</p>
+              <p><strong><%= classification.proposed_outcome %></strong></p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Final Outcome</p>
+              <% if (classification.final_outcome === 'First Class Honours') { %>
+                <span class="badge bg-success"><%= classification.final_outcome %></span>
+              <% } else if (classification.final_outcome === 'Upper Second Class (2:1)') { %>
+                <span class="badge bg-primary"><%= classification.final_outcome %></span>
+              <% } else if (classification.final_outcome === 'Lower Second Class (2:2)') { %>
+                <span class="badge bg-info"><%= classification.final_outcome %></span>
+              <% } else if (classification.final_outcome === 'Third Class Honours') { %>
+                <span class="badge bg-warning text-dark"><%= classification.final_outcome %></span>
+              <% } else { %>
+                <span class="badge bg-danger"><%= classification.final_outcome %></span>
+              <% } %>
+            </div>
+            <div class="col-md-3">
+              <p class="text-muted mb-1">Classified At</p>
+              <p><%= new Date(classification.classified_at).toLocaleDateString('en-GB') %></p>
+            </div>
+          </div>
+
+          <% if (classification.rationale) { %>
+            <div class="row">
+              <div class="col-md-12">
+                <p class="text-muted mb-1">Rationale</p>
+                <p><%= classification.rationale %></p>
+              </div>
+            </div>
+          <% } %>
+
+        </div>
+      </div>
+
+      <%# Override Classification %>
+      <div class="card">
+        <div class="card-header bg-white">
+          <h5 class="mb-0">Override Classification</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Use this to manually override the system classification. A rationale must be provided.</p>
+          <form action="/academic/classificationOverride/<%= student.id %>" method="POST">
+
+            <div class="form-group mb-3">
+              <label for="final_outcome">Final Outcome</label>
+              <select class="form-control" id="final_outcome" name="final_outcome" required>
+                <option value="">Select outcome</option>
+                <option value="First Class Honours" <%= classification.final_outcome === 'First Class Honours' ? 'selected' : '' %>>First Class Honours</option>
+                <option value="Upper Second Class (2:1)" <%= classification.final_outcome === 'Upper Second Class (2:1)' ? 'selected' : '' %>>Upper Second Class (2:1)</option>
+                <option value="Lower Second Class (2:2)" <%= classification.final_outcome === 'Lower Second Class (2:2)' ? 'selected' : '' %>>Lower Second Class (2:2)</option>
+                <option value="Third Class Honours" <%= classification.final_outcome === 'Third Class Honours' ? 'selected' : '' %>>Third Class Honours</option>
+                <option value="Fail" <%= classification.final_outcome === 'Fail' ? 'selected' : '' %>>Fail</option>
+                <option value="Not Eligible" <%= classification.final_outcome === 'Not Eligible' ? 'selected' : '' %>>Not Eligible</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="rationale">Rationale</label>
+              <textarea
+                class="form-control"
+                id="rationale"
+                name="rationale"
+                rows="4"
+                required
+                placeholder="Please provide a reason for overriding the classification..."><%= classification.rationale || '' %></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-warning"
+              onclick="return confirm('Are you sure you want to override this classification?')">
+              Override Classification
+            </button>
+
+          </form>
+        </div>
+      </div>
+
+    <% } else { %>
+      <div class="alert alert-info">
+        No classification has been run for this student yet. Click "Run Classification" above to generate one.
+      </div>
+    <% } %>
+
+    <div class="mt-4">
+      <a href="/academic/studentProfile/<%= student.id %>" class="btn btn-secondary">
+        Back to Student Profile
+      </a>
+    </div>
+
+  </div>
+
+</body>
+</html>
