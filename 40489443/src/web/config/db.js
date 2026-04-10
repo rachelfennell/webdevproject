@@ -12,6 +12,9 @@ import { Sequelize } from 'sequelize';
 // Sequelize connection using URI
 const sequelize = new Sequelize('mysql://root:@localhost:3306/40489443', {
   logging: false, //don't want to see queries in console
+    dialectOptions: {
+    decimalNumbers: true
+  }
 });
 
 // Test the connection

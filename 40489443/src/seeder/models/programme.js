@@ -81,6 +81,15 @@ const Programme = sequelize.define('Programme', {
       max: { args: [100], msg: 'Resit cap cannot be more than 100' }
     }
   },
+  pass_mark: {
+  type: DataTypes.INTEGER,
+  allowNull: false,
+  defaultValue: 40,
+  validate: {
+    min: { args: [0], msg: 'Pass mark cannot be less than 0' },
+    max: { args: [100], msg: 'Pass mark cannot be more than 100' }
+  }
+},
   active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true

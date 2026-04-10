@@ -91,6 +91,37 @@ router.post(
   academicController.removeModule
 );
 
+// View Programme Student List
+router.get(
+  '/academic/programmeStudentList/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.programmeStudentList
+);
+
+// View Module Results for All Students
+router.get(
+  '/academic/moduleResults/:programmeId/:moduleId',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.viewModuleResults
+);
+
+// Edit Students Results Page
+router.get(
+  '/academic/editResults/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.getEditResultsPage
+);
+
+router.post(
+  '/academic/editResults/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postEditResultsPage
+);
+
 
 
 

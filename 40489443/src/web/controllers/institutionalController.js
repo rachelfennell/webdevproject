@@ -327,7 +327,7 @@ const activeModules = await Module.findAll({
 export const postEditProgrammePage = async (req, res) => {
   try {
     const programmeId = req.params.id;
-    const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, active } = req.body;
+    const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, pass_mark, active } = req.body;
 
     const programme = await Programme.findByPk(programmeId);
 
@@ -340,6 +340,7 @@ export const postEditProgrammePage = async (req, res) => {
     programme.y2_weight = y2_weight;
     programme.y3_weight = y3_weight;
     programme.resit_cap = resit_cap;
+    programme.pass_mark = pass_mark;
     programme.active = active === 'on';
 
     await programme.save();
@@ -373,6 +374,7 @@ const programme = await Programme.findByPk(programmeId);
       year_level,
       mandatory,
       credits,
+   
       active: true
     });
 

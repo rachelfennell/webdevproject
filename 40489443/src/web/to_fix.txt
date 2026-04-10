@@ -1,85 +1,13 @@
-academic admin issues 
-
-Error adding student
-Cannot update programme, only name 
-when click on update student it shows the students result details
-cannot update results 
-cannot add a module to a student
-cannot update classifications
-need a way to log out 
-calculate classifications page
-audit log page
-
-
-main dashboard:
-
-to see all assigned programmes (filter by programme name and then graduation year of students assigned)
-to see entire student pool - option to filter by programmes etc (something to say that they don't have access to student details as not in assigned programme for them)
-
-click on assigned programme and brings up options:
-edit programme weights/resit caps
-edit modules assigned to programme
-shows main data on students in this programme - graphs/pie charts etc 
-graphs on students whos grades need reviewed
-graphs for students who have failed and need to resit - flagged for manual review
-button to see all of these students
-button to see all student list
-
-
-from students assigned to programme - ability to click on each student and see their results for each module
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-institutional admin issues
-
-manage admins doesn't work
-manage programs button doesn't work
-http://localhost:3000/institutional/programmes/create doesn't work
-
-
-
-error page doesn't work at all
-errors not showing up correct on screen 
-
-
-
-login works
-can change student name
-academic admin dashboard works
-institutional admin dashboard works
-connects to db correctly
-
-
-
-things to fix in order:
-1. sort out inst admins first - get buttons working on dashboard
-2. fix problems with it starting with creating users then creating programmes
-3. sort out managing both and showing list on screen
-4. sort out editing existing users
-5. sort out editing existing programmes
-6. change what fields are showing on screen in boxes 
-7. fix adding a new student
-8. fix editing students 
-9. sort out viewing students and student details 
-10. figure out ability to add in new results for modules
-11. manually update classifications
-12. need to work out method for working out y2/3 total scores to equal classifications
-13. audit log - everything needs done
-
+Important Things Left!
+1. Classification logic for entire site! 
+2. Add something to do with classifications on programme dashboard
+3. Potentially figure out the audit log stuff? 
+4. Need to update all the seeder files to have more data
+5. API?
+6. Can only access final yesr students so change graduation year to all the same!!
+7. Need search features for students etc
+8. Charts and tables
+9. Security stuff
 
 
 
@@ -101,3 +29,9 @@ Improve
 15. Lets it create a new programme without degree_type or school being entered - enums. make these a drop down list with available enums
 16. Need to create logic to stop a programme being added to a user if it's already assigned
 17. MOVE ALL STUFF TO DO WITH MODULES AND WEIGHTS ETC TO ACADEMIC ADMIN 
+18. Have something in so that it's programmes by graduation year?
+19. Fix all back buttons to be back to previous page
+20. Update classification logic stuff on students profile also
+21. Have students modules organised by module code 
+22. Change all the dates to just show the date and not time
+23. Change colours of everything and backgrounds etc

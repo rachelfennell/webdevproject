@@ -3,6 +3,16 @@ import { User, UserProgramme, Programme, ProgrammeModule, Student, Result, Modul
 import sequelize from '../config/db.js';
 import { Op } from 'sequelize';
 
+//Method to calculate students overall mark
+const getOverallMark = (moduleId, results, resitCap) => {
+  const original = results.find(r => r.module_id === moduleId && r.is_resit === false);
+  const resit = results.find(r => r.module_id === moduleId && r.is_resit === true);
+  if (resit) return Math.min(resit.mark, resitCap);
+  if (original) return original.mark;
+  return null;
+};
+
+
 // Main Dashboard
 export const dashboard = async (req, res) => {
   try { 
@@ -199,32 +209,6 @@ export const deactivateStudent = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Programme Dashboard
 export const programmeDashboard = async (req, res) => {
   try {
@@ -244,13 +228,18 @@ export const programmeDashboard = async (req, res) => {
     }
 
     const students = await Student.findAll({
-      where: { programme_id: programmeId, active_student: true }
+      where: { programme_id: programmeId, active_student: true },
+      include: { model: Result }
     });
+
+    console.log('Results for first student:', JSON.stringify(students[0]?.Results, null, 2));
+console.log('Pass mark:', programme.pass_mark);
 
     res.render('academic/programmeDashboard', {
       user: req.session.user,
       programme,
-      students
+      students,
+      getOverallMark
     });
 
   } catch (err) {
@@ -288,7 +277,8 @@ export const getEditProgrammePage = async (req, res) => {
     res.render('academic/editProgramme', {
       user: req.session.user,
       programme,
-      activeModules
+      activeModules,
+      query: req.query
     });
 
   } catch (err) {
@@ -300,7 +290,7 @@ export const getEditProgrammePage = async (req, res) => {
 export const postEditProgrammePage = async (req, res) => {
   try {
     const programmeId = req.params.id;
-    const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, active } = req.body;
+    const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, pass_mark, active } = req.body;
 
     const programme = await Programme.findByPk(programmeId);
 
@@ -313,6 +303,7 @@ export const postEditProgrammePage = async (req, res) => {
     programme.y2_weight = y2_weight;
     programme.y3_weight = y3_weight;
     programme.resit_cap = resit_cap;
+    programme.pass_mark = pass_mark;
     programme.active = active === 'on';
 
     await programme.save();
@@ -337,14 +328,31 @@ export const assignModule = async (req, res) => {
     const module = await Module.findByPk(moduleId);
     if (!module) return res.status(404).render('error', { message: 'Module not found.' });
 
-    await ProgrammeModule.create({
-      programme_id: programmeId,
-      module_id: moduleId,
-      year_level,
-      mandatory,
-      credits,
-      active: true
+    const existing = await ProgrammeModule.findOne({
+      where: { programme_id: programmeId, module_id: moduleId }
     });
+
+    if (existing) {
+      if (!existing.active) {
+        existing.active = true;
+        existing.year_level = year_level;
+        existing.mandatory = mandatory;
+        existing.credits = credits;
+        await existing.save();
+      } else {
+        return res.redirect(`/academic/editProgramme/${programmeId}?error=Module already assigned`);
+      }
+    } else {
+      await ProgrammeModule.create({
+        programme_id: programmeId,
+        module_id: moduleId,
+        year_level,
+        mandatory,
+        credits,
+       
+        active: true
+      });
+    }
 
     return res.redirect(`/academic/editProgramme/${programmeId}`);
 
@@ -382,3 +390,166 @@ export const removeModule = async (req, res) => {
   }
 };
 
+// View All Students Assigned to a Programme
+export const programmeStudentList = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+
+    const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found' });
+
+    const students = await Student.findAll({
+      where: { programme_id: programmeId },
+      order: [['last_name', 'ASC']]
+    });
+
+    const activeStudents = students.filter(s => s.active_student);
+    const inactiveStudents = students.filter(s => !s.active_student);
+
+    res.render('academic/programmeStudentList', {
+      user: req.session.user,
+      programme,
+      activeStudents,
+      inactiveStudents
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load programme student list' });
+  }
+};
+
+// View All Students Results for a Module
+export const viewModuleResults = async (req, res) => {
+  try {
+    const programmeId = req.params.programmeId;
+    const moduleId = req.params.moduleId;
+
+    const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found' });
+
+    const module = await Module.findByPk(moduleId);
+    if (!module) return res.render('error', { message: 'Module not found' });
+
+    const programmeModule = await ProgrammeModule.findOne({
+      where: { programme_id: programmeId, module_id: moduleId }
+    });
+
+    const students = await Student.findAll({
+      where: { programme_id: programmeId, active_student: true },
+      order: [['last_name', 'ASC']]
+    });
+
+    // Fetch original and resit results separately
+    const originalResults = await Result.findAll({
+      where: { module_id: moduleId, is_resit: false }
+    });
+
+    const resitResults = await Result.findAll({
+      where: { module_id: moduleId, is_resit: true }
+    });
+
+    res.render('academic/moduleResults', {
+      user: req.session.user,
+      programme,
+      module,
+      programmeModule,
+      students,
+      originalResults,
+      resitResults,
+      getOverallMark
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load module results' });
+  }
+};
+
+// Add/Edit Students Results for a Module Page
+export const getEditResultsPage = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    const student = await Student.findByPk(studentId, {
+      include: { model: Programme }
+    });
+
+    if (!student) return res.render('error', { message: 'Student not found' });
+
+    const programmeModules = await ProgrammeModule.findAll({
+      where: { programme_id: student.programme_id, active: true },
+      include: { model: Module, attributes: ['id', 'name', 'module_code'] }
+    });
+
+    const results = await Result.findAll({
+      where: { student_id: studentId }
+    });
+
+res.render('academic/editResults', {
+  user: req.session.user,
+  student,
+  programmeModules,
+  results,
+  from: req.query.from || `/academic/studentProfile/${studentId}`
+});
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load edit results page' });
+  }
+};
+
+// Post Edit Results Page
+export const postEditResultsPage = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const { module_id, year_level, original_mark, resit_mark } = req.body;
+
+    if (original_mark !== '') {
+      const existingOriginal = await Result.findOne({
+        where: { student_id: studentId, module_id, is_resit: false }
+      });
+
+      if (existingOriginal) {
+        existingOriginal.mark = original_mark;
+        existingOriginal.year_level = year_level;
+        await existingOriginal.save();
+      } else {
+        await Result.create({
+          student_id: studentId,
+          module_id,
+          mark: original_mark,
+          year_level,
+          is_resit: false
+        });
+      }
+    }
+
+    if (resit_mark !== '') {
+      const existingResit = await Result.findOne({
+        where: { student_id: studentId, module_id, is_resit: true }
+      });
+
+      if (existingResit) {
+        existingResit.mark = resit_mark;
+        existingResit.year_level = year_level;
+        await existingResit.save();
+      } else {
+        await Result.create({
+          student_id: studentId,
+          module_id,
+          mark: resit_mark,
+          year_level,
+          is_resit: true
+        });
+      }
+    }
+
+    return res.redirect(`/academic/editResults/${studentId}?from=${req.query.from || `/academic/studentProfile/${studentId}`}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to save results' });
+  }
+};

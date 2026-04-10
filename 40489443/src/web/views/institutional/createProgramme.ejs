@@ -71,6 +71,19 @@
         <input type="text" name="resit_cap" class="form-control" required>
       </div>
 
+      <div class="form-group mb-3">
+  <label for="pass_mark">Pass Mark</label>
+  <input
+    type="number"
+    class="form-control"
+    id="pass_mark"
+    name="pass_mark"
+    value="<%= typeof programme !== 'undefined' ? programme.pass_mark : 40 %>"
+    min="0"
+    max="100"
+    required />
+</div>
+
       <!-- Submit -->
       <button type="submit" class="btn btn-primary">Create Programme</button>
       <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
