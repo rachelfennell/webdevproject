@@ -103,11 +103,16 @@
                 <span class="badge bg-danger"><%= classification.final_outcome %></span>
               <% } %>
             </div>
-            <div class="col-md-3">
-              <p class="text-muted mb-1">Classified At</p>
-              <p><%= new Date(classification.classified_at).toLocaleDateString('en-GB') %></p>
-            </div>
-          </div>
+<div class="col-md-3">
+  <p class="text-muted mb-1">Classified At</p>
+  <p>
+    <% if (classification.classified_at) { %>
+      <%= new Date(classification.classified_at).toLocaleDateString('en-GB') %>
+    <% } else { %>
+      —
+    <% } %>
+  </p>
+</div>
 
           <% if (classification.rationale) { %>
             <div class="row">
@@ -121,8 +126,9 @@
         </div>
       </div>
 
+     
       <%# Override Classification %>
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-header bg-white">
           <h5 class="mb-0">Override Classification</h5>
         </div>
@@ -158,11 +164,46 @@
               onclick="return confirm('Are you sure you want to override this classification?')">
               Override Classification
             </button>
+         </form>
+        </div>
+      </div>    
+    
+  
+ <%# Flag Student %>
+      <div class="card mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Flag Student</h5>
+          <% if(classification.is_flagged) { %>
+            <span class="badge bg-danger">Flagged for Review</span>
+            <% } %>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Would you like to flag this student for a manual review? A reason must be provided.</p>
+          <form action="/academic/flagStudent/<%= student.id %>" method="POST">
+
+         <div class="mb-3 form-check">
+<input type="checkbox" id="is_flagged" name="is_flagged" value="on" <%=classification.is_flagged ? 'checked' : '' %> />
+        <label class=" form-check-label" for="is_flagged"> Flag Student </label>
+        
+      </div>
+
+            <div class="form-group mb-3">
+              <label for="flag_reason">Reason</label>
+              <textarea
+                class="form-control"
+                id="flag_reason"
+                name="flag_reason"
+                rows="4"
+          
+                placeholder="Please provide a reason for flagging this student..."><%= classification.flag_reason || '' %></textarea>
+            </div>
+
 
           </form>
         </div>
       </div>
 
+    
     <% } else { %>
       <div class="alert alert-info">
         No classification has been run for this student yet. Click "Run Classification" above to generate one.

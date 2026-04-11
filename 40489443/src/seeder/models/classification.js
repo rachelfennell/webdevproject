@@ -17,6 +17,18 @@ const Classification = sequelize.define('Classification', {
       isInt: { msg: 'Classified by must be an integer' }
     }
   },
+    classified_at: {
+    type: DataTypes.DATE,
+defaultValue: DataTypes.NOW,
+     allowNull: true,
+    validate: {
+      isBeforeNow(value) {
+        if (value && new Date(value) > new Date()) {
+          throw new Error('Classification date cannot be in the future');
+        }
+      }
+    }
+  },
   y2_average: {
     type: DataTypes.DECIMAL(5, 2),
     allowNull: true,
@@ -77,9 +89,10 @@ final_outcome: {
       if (value) this.setDataValue('rationale', value.trim());
     }
   },
-  classified_at: {
+  overridden_at: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
+
+     allowNull: true,
     validate: {
       isBeforeNow(value) {
         if (value && new Date(value) > new Date()) {
@@ -87,7 +100,44 @@ final_outcome: {
         }
       }
     }
+  },
+overridden_by: {
+  type: DataTypes.INTEGER,
+  allowNull: true,
+  validate: {
+    isInt: { msg: 'Classified by must be an integer' }
   }
+},
+    is_flagged: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  flag_reason: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    set(value) {
+      if (value) this.setDataValue('flag_reason', value.trim());
+    }
+  },
+  flagged_at: {
+    type: DataTypes.DATE,
+  
+     allowNull: true,
+    validate: {
+      isBeforeNow(value) {
+        if (value && new Date(value) > new Date()) {
+          throw new Error('Flagged date cannot be in the future');
+        }
+      }
+    }
+  },
+  flagged_by: {
+  type: DataTypes.INTEGER,
+ allowNull: true,
+  validate: {
+    isInt: { msg: 'Flagged by must be an integer' }
+  }
+},
 }, {
   tableName: 'classifications',
   timestamps: false,

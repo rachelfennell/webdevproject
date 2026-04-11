@@ -626,22 +626,35 @@ export const postClassificationPage = async (req, res) => {
       classification.final_average = result.eligible ? result.final_average : null;
       classification.proposed_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
       classification.final_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
-      classification.is_overridden = false;
-      classification.rationale = result.eligible ? null : result.reason;
       classification.classified_by = req.session.user.id;
       classification.classified_at = new Date();
+      classification.is_overridden = false;
+      classification.rationale = result.eligible ? null : result.reason;
+      classification.overridden_by = null;
+      classification.overridden_at = null;
+      classification.is_flagged = false;
+      classification.flag_reason = null;
+      classification.flagged_by = null;
+      classification.flagged_at = null;
       await classification.save();
     } else {
       await Classification.create({
         student_id: studentId,
         classified_by: req.session.user.id,
+        classified_at: new Date(),
         y2_average: result.eligible ? result.y2_average : null,
         y3_average: result.eligible ? result.y3_average : null,
         final_average: result.eligible ? result.final_average : null,
         proposed_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
         final_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
         is_overridden: false,
-        rationale: result.eligible ? null : result.reason
+        rationale: result.eligible ? null : result.reason,
+        overridden_by: null,
+        overridden_at: null,
+        is_flagged: false,
+        flag_reason: null,
+        flagged_by: null,
+        flagged_at: null
       });
     }
 
@@ -668,8 +681,8 @@ export const postOverrideClassification = async (req, res) => {
     classification.final_outcome = final_outcome;
     classification.rationale = rationale;
     classification.is_overridden = true;
-    classification.classified_by = req.session.user.id;
-    classification.classified_at = new Date();
+    classification.overridden_by = req.session.user.id;
+    classification.overridden_at = new Date();
 
     await classification.save();
 
@@ -678,5 +691,32 @@ export const postOverrideClassification = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to override classification' });
+  }
+};
+
+// Manually Flag Student for Review
+export const postFlagStudentReview = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+    const { is_flagged, flag_reason } = req.body;
+
+    const classification = await Classification.findOne({
+      where: { student_id: studentId }
+    });
+
+    if (!classification) return res.render('error', { message: 'No classification found for this student' });
+
+    classification.is_flagged = is_flagged === 'on';
+    classification.flag_reason = is_flagged === 'on' ? flag_reason : null;
+    classification.flagged_by = is_flagged === 'on' ? req.session.user.id : null;
+    classification.flagged_at = is_flagged === 'on' ? new Date() : null;
+
+    await classification.save();
+
+    return res.redirect(`/academic/classification/${studentId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to flag student for review' });
   }
 };

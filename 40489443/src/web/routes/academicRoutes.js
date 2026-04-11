@@ -145,4 +145,12 @@ router.post(
   academicController.postOverrideClassification
 );
 
+// Flag Student for Review
+router.post(
+  '/academic/flagStudent/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postFlagStudentReview
+);
+
 export default router;
