@@ -196,11 +196,14 @@ export const removeProgramme = async (req, res) => {
 // Add New Academic Admin Page
 export const getCreateAdminPage = async (req, res) => {
   try {
-    res.render('institutional/createAdmin', { user: req.session.user });
+    res.render('institutional/createAdmin', { user: req.session.user, error: null });
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to load ' });
+    res.render('institutional/createAdmin', {
+      user: req.session.user,
+      error: 'Unable to load page'
+    });
   }
 };
 
@@ -223,9 +226,25 @@ export const postCreateAdminPage = async (req, res) => {
 
     res.redirect('/institutional/manageAdmins');
 
-  } catch (err) {
+} catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to load ' });
+
+let errorMessage = 'Something went wrong';
+
+    if (err.name === 'SequelizeValidationError') {
+      errorMessage = err.errors[0].message;
+    }
+    else if (err.name === 'SequelizeUniqueConstraintError') {
+      errorMessage = err.errors[0].message;
+    }
+    else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    return res.status(400).render('institutional/createAdmin', {
+      user: req.session.user,
+      error: errorMessage
+    });
   }
 };
 

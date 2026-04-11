@@ -34,3 +34,5 @@ Improve
 23. Change colours of everything and backgrounds etc
 24. Move overall mark stuff to utils folder
 25. When editing a student, makes you redo the enrolled date every time
+26. Shouldn't let you inactivate programme with active students
+27. Something in for adding in already assigned programmes - get code from other page

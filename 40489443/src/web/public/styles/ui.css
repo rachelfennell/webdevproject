@@ -1,0 +1,77 @@
+
+.loginBody{
+    background-color: rgba(143, 49, 49, 0.618);
+}
+
+.loginPageBody{
+    display: flex;
+    min-height: 85vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.loginButton{
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+    background-color: rgb(119, 0, 0);
+    color: white;
+}
+
+/* Default border when not selected */
+.form-control {
+  border-color: #adafbd;        
+}
+
+ /* Darker border when clicked into */
+.form-control:focus {
+  border-color: #5d656c;       
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25); 
+}
+
+.navbar{
+  background-color: rgb(119, 0, 0);  
+}
+
+.navbar .nav-link {
+    color: white
+}
+
+.navbar .nav-link:hover{
+    color: white ;
+    background-color: rgba(143, 49, 49, 0.618);
+    border-radius: 4px;
+}
+
+.navbar .border-secondary {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar .btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+body{
+    background-color: rgba(143, 49, 49, 0.43);
+    
+}
+
+.dashboardButton{
+    background-color: rgb(119, 0, 0);
+    color: white;
+}
+
+.dashboardButton:hover{
+     background-color: lightgray;
+  color:  rgb(119, 0, 0);
+}
+
+table {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.pageSpacing{
+    padding-bottom: 60px;
+}

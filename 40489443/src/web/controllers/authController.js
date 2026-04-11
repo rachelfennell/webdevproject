@@ -1,5 +1,5 @@
 
-// Logic for running auth login route
+
 import { User } from '../../seeder/models/index.js';
 
 export const getLogin = (req, res) => {
@@ -19,11 +19,11 @@ export const postLogin = async (req, res) => {
     //Checks username and password
     const user = await User.findOne({ where: { username, active: true } });
     if (!user) {
-      return res.render('login', { error: 'Invalid username or password' });
+      return res.render('login', { error: 'Invalid username' });
     }
     const valid = await user.validatePassword(password);
     if (!valid) {
-      return res.render('login', { error: 'Invalid username or password' });
+      return res.render('login', { error: 'Invalid password' });
     }
     //Finds it in the user
     req.session.user = {

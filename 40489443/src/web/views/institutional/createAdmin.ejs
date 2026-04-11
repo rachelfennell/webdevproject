@@ -3,76 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create New Academic Admin</title>
+  <title>Create Admin Page</title>
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/ui.css">
 </head>
+
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container">
-      <a class="navbar-brand" href="#">HEdClass</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
-          </li>
-        </ul>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+
+  <!-- Top row -->
+  <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+    <a class="navbar-brand mb-0" href="/institutional/dashboard">
+      <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+    </a>
+    <span class="text-white">
+      Logged in as <%= user.first_name %> <%= user.last_name %>
+    </span>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="w-100 py-2 d-flex justify-content-end">
+    <ul class="navbar-nav flex-row gap-3">
+      <li class="nav-item">
+        <a class="nav-link" href="/institutional/dashboard">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
+      </li>
+      <li class="nav-item">
+        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+      </li>
+    </ul>
+  </div>
+
+</nav>
+
+
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+
+    <div class="col-12 col-lg-6">
+
+      <div class="card shadow-sm p-4">
+
+        <h4 class="mb-3">Create New Academic Admin</h4>
+
+     
+        <% if (error) { %>
+          <div class="alert alert-danger text-center shadow-sm">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <form action="/institutional/createAdmin" method="POST">
+
+          <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email (@hedemo.co.uk)</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+
+            <a href="/institutional/manageAdmins" class="btn btn-secondary">
+              Cancel
+            </a>
+
+            <button type="submit" class="btn dashboardButton">
+              Create Admin
+            </button>
+
+          </div>
+
+        </form>
+
       </div>
     </div>
-  </nav>
 
- <div class="container">
-    <h2>Create New Academic Admin</h2>
-
-
-    <form action="/institutional/createAdmin" method="POST">
-
-      <!-- Username -->
-      <div class="mb-3">
-        <label class="form-label">Username</label>
-        <input type="text" name="username" class="form-control" required>
-      </div>
-
-      <!-- Password -->
-      <div class="mb-3">
-        <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" required>
-      </div>
-
-      <!-- First Name -->
-      <div class="mb-3">
-        <label class="form-label">First Name</label>
-        <input type="text" name="first_name" class="form-control" required>
-      </div>
-
-      <!-- Last Name -->
-      <div class="mb-3">
-        <label class="form-label">Last Name</label>
-        <input type="text" name="last_name" class="form-control" required>
-      </div>
-
-      <!-- Email -->
-      <div class="mb-3">
-        <label class="form-label">Email (@hedemo.co.uk)</label>
-        <input type="email" name="email" class="form-control" required>
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" class="btn btn-primary">Create Admin</button>
-      <a href="/institutional/manageAdmins" class="btn btn-secondary">Cancel</a>
-
-    </form>
   </div>
+</div>
 
 </body>
 </html>
-
-
-
-
-
 
 
 

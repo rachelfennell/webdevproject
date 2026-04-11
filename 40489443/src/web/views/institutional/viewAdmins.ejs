@@ -1,38 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View All Academic Admins</title>
+  <title>Institutional Admin Dashboard | HEdClass</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/ui.css">
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container">
-      <a class="navbar-brand" href="#">HEdClass</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <span class="nav-link">Logged in as <%= user.first_name %>
-                <%= user.last_name %></span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
-          </li>
-        </ul>
-      </div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+
+    <%# Top row %>
+    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+      <a class="navbar-brand mb-0" href="/institutional/dashboard">
+        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+      </a>
+      <span class="text-white">Logged in as <%= user.first_name %> <%= user.last_name %></span>
     </div>
+
+    <%# Bottom row %>
+    <div class="w-100 py-2 d-flex justify-content-end">
+      <ul class="navbar-nav flex-row gap-3">
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/dashboard">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
+        </li>
+        <li class="nav-item">
+          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </li>
+      </ul>
+    </div>
+
   </nav>
 
 
-  <h1>All Academic Admins</h1>
+  <div class="container mt-5 mb-4">
 
-
-  <div class="container">
-
-    <table class="table table-striped">
+    <table class="table table-striped mb-4">
       <thead>
         <tr>
           <th>Name</th>
@@ -55,7 +66,7 @@
               <%= admin.email %>
             </td>
             <td> <a href="/institutional/adminProfile/<%= admin.id %>">
-              <button type="button"class="btn btn-info">Info</button></td>
+              <button type="button"class="btn dashboardButton">View</button></td>
           </tr>
           <% }) %>
       </tbody>
