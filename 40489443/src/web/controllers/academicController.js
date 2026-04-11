@@ -579,7 +579,7 @@ export const getClassificationPage = async (req, res) => {
       r.Module.credits = pm ? pm.credits : 0;
     });
 
-    res.render('academic/classificationPage', {
+    res.render('academic/studentClassification', {
       user: req.session.user,
       student,
       classification: student.Classification || null
@@ -658,7 +658,7 @@ export const postClassificationPage = async (req, res) => {
       });
     }
 
-    return res.redirect(`/academic/classification/${studentId}`);
+    return res.redirect(`/academic/studentClassification/${studentId}`);
 
   } catch (err) {
     console.error(err);
@@ -686,7 +686,7 @@ export const postOverrideClassification = async (req, res) => {
 
     await classification.save();
 
-    return res.redirect(`/academic/classification/${studentId}`);
+    return res.redirect(`/academic/studentClassification/${studentId}`);
 
   } catch (err) {
     console.error(err);
@@ -713,10 +713,179 @@ export const postFlagStudentReview = async (req, res) => {
 
     await classification.save();
 
-    return res.redirect(`/academic/classification/${studentId}`);
+    return res.redirect(`/academic/studentClassification/${studentId}`);
 
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to flag student for review' });
+  }
+};
+
+// Programme Classification Page
+export const getProgrammeClassificationPage = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+
+    const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found' });
+
+    const students = await Student.findAll({
+      where: { programme_id: programmeId, active_student: true },
+      include: [
+        {
+          model: Result,
+          include: { model: Module, attributes: ['id', 'name', 'module_code'] }
+        },
+        { model: Classification }
+      ],
+      order: [['last_name', 'ASC']]
+    });
+
+    const programmeModules = await ProgrammeModule.findAll({
+      where: { programme_id: programmeId, active: true }
+    });
+
+    students.forEach(student => {
+      student.Results.forEach(r => {
+        const pm = programmeModules.find(pm => pm.module_id === r.module_id);
+        r.Module.credits = pm ? pm.credits : 0;
+      });
+    });
+
+    res.render('academic/programmeClassification', {
+      user: req.session.user,
+      programme,
+      students
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load programme classification page' });
+  }
+};
+
+export const postProgrammeClassification = async (req, res) => {
+  try {
+    const programmeId = req.params.id;
+
+    const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found' });
+
+    const students = await Student.findAll({
+      where: { programme_id: programmeId, active_student: true },
+      include: [
+        {
+          model: Result,
+          include: { model: Module, attributes: ['id', 'name', 'module_code'] }
+        }
+      ]
+    });
+
+    const programmeModules = await ProgrammeModule.findAll({
+      where: { programme_id: programmeId, active: true }
+    });
+
+    for (const student of students) {
+      student.Results.forEach(r => {
+        const pm = programmeModules.find(pm => pm.module_id === r.module_id);
+        r.Module.credits = pm ? pm.credits : 0;
+      });
+
+      const result = classifyStudent(student.Results, programme);
+
+      const classification = await Classification.findOne({
+        where: { student_id: student.id }
+      });
+
+      if (classification) {
+        classification.y2_average = result.eligible ? result.y2_average : null;
+        classification.y3_average = result.eligible ? result.y3_average : null;
+        classification.final_average = result.eligible ? result.final_average : null;
+        classification.proposed_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
+        classification.final_outcome = result.eligible ? result.proposed_outcome : 'Not Eligible';
+        classification.classified_by = req.session.user.id;
+        classification.classified_at = new Date();
+        classification.is_overridden = false;
+        classification.rationale = result.eligible ? null : result.reason;
+        classification.overridden_by = null;
+        classification.overridden_at = null;
+        classification.is_flagged = false;
+        classification.flag_reason = null;
+        classification.flagged_by = null;
+        classification.flagged_at = null;
+        await classification.save();
+      } else {
+        await Classification.create({
+          student_id: student.id,
+          classified_by: req.session.user.id,
+          classified_at: new Date(),
+          y2_average: result.eligible ? result.y2_average : null,
+          y3_average: result.eligible ? result.y3_average : null,
+          final_average: result.eligible ? result.final_average : null,
+          proposed_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
+          final_outcome: result.eligible ? result.proposed_outcome : 'Not Eligible',
+          is_overridden: false,
+          rationale: result.eligible ? null : result.reason,
+          overridden_by: null,
+          overridden_at: null,
+          is_flagged: false,
+          flag_reason: null,
+          flagged_by: null,
+          flagged_at: null
+        });
+      }
+    }
+
+    return res.redirect(`/academic/programmeClassification/${programmeId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to run programme classification' });
+  }
+};
+
+// Audit Log Page
+export const getAuditPage = async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+
+    const classifications = await Classification.findAll({
+      where: {
+        [Op.or]: [
+          { is_overridden: true },
+          { is_flagged: true }
+        ]
+      },
+      include: [
+        {
+          model: Student,
+          attributes: ['first_name', 'last_name', 'student_number'],
+          required: true,
+          include: {
+            model: Programme,
+            attributes: ['name', 'programme_code'],
+            required: true,
+            include: {
+              model: User,
+              where: { id: userId },
+              through: { where: { active: true } },
+              required: true,
+              attributes: []
+            }
+          }
+        },
+        { model: User, attributes: ['first_name', 'last_name'] }
+      ],
+      order: [['classified_at', 'DESC']]
+    });
+
+    res.render('academic/auditLog', {
+      user: req.session.user,
+      classifications
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to load audit log' });
   }
 };

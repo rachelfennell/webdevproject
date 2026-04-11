@@ -124,14 +124,14 @@ router.post(
 
 // Generate Students Classification Page
 router.get(
-  '/academic/classification/:id',
+  '/academic/studentClassification/:id',
   isAuthenticated,
   isAcademicAdmin,
   academicController.getClassificationPage
 );
 
 router.post(
-  '/academic/classification/:id',
+  '/academic/studentClassification/:id',
   isAuthenticated,
   isAcademicAdmin,
   academicController.postClassificationPage
@@ -152,5 +152,29 @@ router.post(
   isAcademicAdmin,
   academicController.postFlagStudentReview
 );
+
+// Programme Classification Page
+router.get(
+  '/academic/programmeClassification/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.getProgrammeClassificationPage
+);
+
+router.post(
+  '/academic/programmeClassification/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postProgrammeClassification
+);
+
+// Academic Admin Audit Log Page
+router.get(
+  '/academic/auditLog',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.getAuditPage
+);
+
 
 export default router;

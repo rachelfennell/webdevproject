@@ -33,3 +33,4 @@ Improve
 22. Change all the dates to just show the date and not time
 23. Change colours of everything and backgrounds etc
 24. Move overall mark stuff to utils folder
+25. When editing a student, makes you redo the enrolled date every time

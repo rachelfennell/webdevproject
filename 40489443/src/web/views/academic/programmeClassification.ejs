@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programme Classification | HEdClass</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="/academic/dashboard">HEdClass</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1>Programme Classification</h1>
+        <p class="text-muted mb-0"><%= programme.name %> — <%= programme.programme_code %></p>
+      </div>
+      <a href="/academic/programmeDashboard/<%= programme.id %>" class="btn btn-secondary">
+        Back to Programme
+      </a>
+    </div>
+
+    <%# Run All Classifications %>
+    <div class="card mb-4">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Run Classification for Entire Cohort</h5>
+      </div>
+      <div class="card-body">
+        <p class="text-muted">
+          Click the button below to run the classification engine for all
+          <strong><%= students.length %></strong> active students on this programme.
+          Any existing classifications will be recalculated and manual overrides will be reset.
+        </p>
+        <form action="/academic/programmeClassification/<%= programme.id %>" method="POST">
+          <button type="submit" class="btn btn-primary"
+            onclick="return confirm('Are you sure you want to run classification for all <%= students.length %> students? This will reset any manual overrides.')">
+            Run Classification for All Students
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <%# Students Classification Table %>
+    <div class="card">
+      <div class="card-header bg-white">
+        <h5 class="mb-0">Classification Results</h5>
+      </div>
+      <div class="card-body p-0">
+        <% if (students.length === 0) { %>
+          <div class="alert alert-info m-3">No active students on this programme.</div>
+        <% } else { %>
+          <table class="table table-striped mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Student Number</th>
+                <th>Name</th>
+                <th>Proposed Outcome</th>
+                <th>Final Outcome</th>
+                <th>Flagged</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% students.forEach(student => { %>
+                <tr>
+                  <td><%= student.student_number %></td>
+                  <td><%= student.first_name %> <%= student.last_name %></td>
+
+                  <% if (student.Classification) { %>
+                    <td><%= student.Classification.proposed_outcome || '—' %></td>
+                    <td>
+                      <% if (student.Classification.final_outcome === 'First Class Honours') { %>
+                        <span class="badge bg-success"><%= student.Classification.final_outcome %></span>
+                      <% } else if (student.Classification.final_outcome === 'Upper Second Class (2:1)') { %>
+                        <span class="badge bg-primary"><%= student.Classification.final_outcome %></span>
+                      <% } else if (student.Classification.final_outcome === 'Lower Second Class (2:2)') { %>
+                        <span class="badge bg-info"><%= student.Classification.final_outcome %></span>
+                      <% } else if (student.Classification.final_outcome === 'Third Class Honours') { %>
+                        <span class="badge bg-warning text-dark"><%= student.Classification.final_outcome %></span>
+                      <% } else if (student.Classification.final_outcome === 'Not Eligible') { %>
+                        <span class="badge bg-danger"><%= student.Classification.final_outcome %></span>
+                      <% } else if (student.Classification.final_outcome === 'Fail') { %>
+                        <span class="badge bg-danger"><%= student.Classification.final_outcome %></span>
+                      <% } else { %>
+                        <span class="badge bg-secondary">—</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <% if (student.Classification.is_flagged) { %>
+                        <span class="badge bg-danger">Flagged</span>
+                      <% } else { %>
+                        <span class="badge bg-secondary">No</span>
+                      <% } %>
+                    </td>
+                  <% } else { %>
+                    <td>—</td>
+                    <td><span class="badge bg-secondary">Not Run</span></td>
+                    <td>—</td>
+                  <% } %>
+
+                  <td>
+                    <a href="/academic/studentProfile/<%= student.id %>" class="btn btn-info btn-sm">
+                      Profile
+                    </a>
+                    <a href="/academic/studentClassification/<%= student.id %>" class="btn btn-primary btn-sm">
+                      Classification
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

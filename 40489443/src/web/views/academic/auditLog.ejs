@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Log | HEdClass</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="/academic/dashboard">HEdClass</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1>Audit Log</h1>
+        <p class="text-muted mb-0">All overridden and flagged classifications across your programmes</p>
+      </div>
+      <a href="/academic/dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <% if (classifications.length === 0) { %>
+      <div class="alert alert-info">
+        No overrides or flags have been recorded yet.
+      </div>
+    <% } else { %>
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table table-striped mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Student Number</th>
+                <th>Name</th>
+                <th>Programme</th>
+                <th>Proposed Outcome</th>
+                <th>Final Outcome</th>
+                <th>Overridden</th>
+                <th>Flagged</th>
+                <th>Rationale</th>
+                <th>Classified At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% classifications.forEach(c => { %>
+                <tr>
+                  <td><%= c.Student.student_number %></td>
+                  <td><%= c.Student.first_name %> <%= c.Student.last_name %></td>
+                  <td><%= c.Student.Programme.name %></td>
+                  <td><%= c.proposed_outcome || '—' %></td>
+                  <td>
+                    <% if (c.final_outcome === 'First Class Honours') { %>
+                      <span class="badge bg-success"><%= c.final_outcome %></span>
+                    <% } else if (c.final_outcome === 'Upper Second Class (2:1)') { %>
+                      <span class="badge bg-primary"><%= c.final_outcome %></span>
+                    <% } else if (c.final_outcome === 'Lower Second Class (2:2)') { %>
+                      <span class="badge bg-info"><%= c.final_outcome %></span>
+                    <% } else if (c.final_outcome === 'Third Class Honours') { %>
+                      <span class="badge bg-warning text-dark"><%= c.final_outcome %></span>
+                    <% } else { %>
+                      <span class="badge bg-danger"><%= c.final_outcome %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (c.is_overridden) { %>
+                      <span class="badge bg-warning text-dark">Yes</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">No</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (c.is_flagged) { %>
+                      <span class="badge bg-danger">Yes</span>
+                    <% } else { %>
+                      <span class="badge bg-secondary">No</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (c.rationale) { %>
+                      <%= c.rationale %>
+                    <% } else if (c.flag_reason) { %>
+                      <%= c.flag_reason %>
+                    <% } else { %>
+                      —
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (c.classified_at) { %>
+                      <%= new Date(c.classified_at).toLocaleDateString('en-GB') %>
+                    <% } else { %>
+                      —
+                    <% } %>
+                  </td>
+                  <td>
+                    <a href="/academic/studentClassification/<%= c.student_id %>" class="btn btn-info btn-sm">
+                      View
+                    </a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } %>
+
+  </div>
+
+</body>
+</html>
