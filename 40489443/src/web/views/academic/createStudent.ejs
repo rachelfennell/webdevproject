@@ -75,7 +75,7 @@
 
     <div class="card">
       <div class="card-body">
-        <form action="/academic/addStudent" method="POST">
+        <form action="/academic/createStudent" method="POST">
 
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -96,7 +96,9 @@
                 <option value="">Select a programme</option>
                 <% programmes.forEach(up => { %>
                   <option value="<%= up.Programme.id %>">
-                    <%= up.Programme.name %> — <%= up.Programme.programme_code %>
+                    <%= up.Programme.name.split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ') %> — <%= up.Programme.programme_code %>
                   </option>
                 <% }) %>
               </select>

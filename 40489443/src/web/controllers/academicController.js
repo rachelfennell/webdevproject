@@ -1057,7 +1057,6 @@ export const getAddStudentPage = async (req, res) => {
   }
 };
 
-// Post Add Student
 export const postAddStudent = async (req, res) => {
   try {
     const { student_number, first_name, last_name, dob, programme_id, enrolled_date, graduation_year } = req.body;
@@ -1076,7 +1075,7 @@ export const postAddStudent = async (req, res) => {
       });
     }
 
-    await Student.create({
+    const newStudent = Student.build({
       student_number,
       first_name,
       last_name,
@@ -1086,6 +1085,8 @@ export const postAddStudent = async (req, res) => {
       graduation_year,
       active_student: true
     });
+
+await newStudent.save();
 
     return res.redirect('/academic/studentList');
 
