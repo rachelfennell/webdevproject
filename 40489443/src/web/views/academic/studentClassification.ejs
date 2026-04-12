@@ -97,6 +97,17 @@
 
       </div>
 
+
+<div class="container mt-5 mb-5">
+ 
+      <div class="d-flex justify-content-end">
+          <a href="/academic/studentProfile/<%= student.id %>" class="btn dashboardButton">
+            Back to Student Profile
+          </a>
+        
+  </div>
+</div>
+
     </div>
 
     <!-- RIGHT -->
@@ -114,7 +125,7 @@
             Run the classification engine using current results.
           </p>
 
-          <form action="/academic/classification/<%= student.id %>" method="POST">
+          <form action="/academic/studentClassification/<%= student.id %>" method="POST">
             <button type="submit"
               class="btn btn-primary"
               onclick="return confirm('Run classification for this student?')">
@@ -295,12 +306,15 @@
      
 
 <button onclick="history.back()" class="btn dashboardButton">
-              Back to Student Profile
+              Back to Programme Dashboard
             </button>
 
 
           </div>
           </div>
+
+
+        
 
 
 

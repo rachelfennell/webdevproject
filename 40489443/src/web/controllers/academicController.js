@@ -104,7 +104,7 @@ export const viewStudentProfile = async (req, res) => {
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
-        attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
+        attributes: ['id', 'name', 'programme_code', 'degree_type', 'school'],
       } });
 
 
@@ -115,7 +115,12 @@ export const viewStudentProfile = async (req, res) => {
       include: [
         { 
           model: Programme, 
-          attributes: ['name', 'programme_code', 'degree_type', 'school'] 
+          attributes: ['name', 'programme_code', 'degree_type', 'school'] ,
+          include: {
+        model: Module,
+        through: {
+          attributes: ['credits', 'year_level', 'mandatory', 'active']
+        } }
         },
         {
           model: Result,
@@ -127,6 +132,12 @@ export const viewStudentProfile = async (req, res) => {
         { model: Classification }
       ]
     });
+
+student.Results.forEach(r => {
+  const pm = student.Programme.Modules.find(m => m.id === r.module_id);
+  r.Module.credits = pm ? pm.ProgrammeModule.credits : 0;
+});
+
 
     if (!student) return res.render('error', { message: 'Student not found' });
 
@@ -305,10 +316,13 @@ export const programmeDashboard = async (req, res) => {
       return res.render('error', { message: 'Programme not found' });
     }
 
-    const students = await Student.findAll({
-      where: { programme_id: programmeId, active_student: true },
-      include: { model: Result }
-    });
+   const students = await Student.findAll({
+  where: { programme_id: programmeId, active_student: true },
+  include: [
+    { model: Result },
+    { model: Classification }
+  ]
+});
 
     res.render('academic/programmeDashboard', {
       user: req.session.user,
@@ -824,6 +838,7 @@ export const getClassificationPage = async (req, res) => {
 
 export const postClassificationPage = async (req, res) => {
   try {
+    console.log('postClassificationPage hit', req.params.id);
     const studentId = req.params.id;
 
     const student = await Student.findByPk(studentId, {
@@ -848,8 +863,11 @@ export const postClassificationPage = async (req, res) => {
     });
 
     const result = classifyStudent(student.Results, student.Programme);
+const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
 
     const classification = await Classification.findOne({ where: { student_id: studentId } });
+
+
 
     if (classification) {
       classification.y2_average = result.eligible ? result.y2_average : null;
@@ -863,10 +881,12 @@ export const postClassificationPage = async (req, res) => {
       classification.rationale = result.eligible ? null : result.reason;
       classification.overridden_by = null;
       classification.overridden_at = null;
-      classification.is_flagged = false;
-      classification.flag_reason = null;
-      classification.flagged_by = null;
-      classification.flagged_at = null;
+      classification.is_flagged = autoFlag;
+classification.flag_reason = autoFlag
+  ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
+  : null;
+classification.flagged_by = autoFlag ? req.session.user.id : null;
+classification.flagged_at = autoFlag ? new Date() : null;
       await classification.save();
     } else {
       await Classification.create({
@@ -882,10 +902,10 @@ export const postClassificationPage = async (req, res) => {
         rationale: result.eligible ? null : result.reason,
         overridden_by: null,
         overridden_at: null,
-        is_flagged: false,
-        flag_reason: null,
-        flagged_by: null,
-        flagged_at: null
+        is_flagged: autoFlag,
+    flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
+    flagged_by: autoFlag ? req.session.user.id : null,
+    flagged_at: autoFlag ? new Date() : null
       });
     }
 
@@ -909,11 +929,19 @@ export const postOverrideClassification = async (req, res) => {
 
     if (!classification) return res.render('error', { message: 'No classification found for this student' });
 
+const autoFlag = final_outcome === 'Fail' || final_outcome === 'Not Eligible';
+
     classification.final_outcome = final_outcome;
     classification.rationale = rationale;
     classification.is_overridden = true;
     classification.overridden_by = req.session.user.id;
     classification.overridden_at = new Date();
+    classification.is_flagged = autoFlag;
+classification.flag_reason = autoFlag
+  ? `Automatically flagged: ${final_outcome}`
+  : null;
+classification.flagged_by = autoFlag ? req.session.user.id : null;
+classification.flagged_at = autoFlag ? new Date() : null;
 
     await classification.save();
 
@@ -1039,7 +1067,7 @@ export const postProgrammeClassification = async (req, res) => {
       const classification = await Classification.findOne({
         where: { student_id: student.id }
       });
-
+const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
       if (classification) {
         classification.y2_average = result.eligible ? result.y2_average : null;
         classification.y3_average = result.eligible ? result.y3_average : null;
@@ -1052,11 +1080,13 @@ export const postProgrammeClassification = async (req, res) => {
         classification.rationale = result.eligible ? null : result.reason;
         classification.overridden_by = null;
         classification.overridden_at = null;
-        classification.is_flagged = false;
-        classification.flag_reason = null;
-        classification.flagged_by = null;
-        classification.flagged_at = null;
-        await classification.save();
+        classification.is_flagged = autoFlag;
+classification.flag_reason = autoFlag
+  ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
+  : null;
+classification.flagged_by = autoFlag ? req.session.user.id : null;
+classification.flagged_at = autoFlag ? new Date() : null;
+  await classification.save();
       } else {
         await Classification.create({
           student_id: student.id,
@@ -1071,10 +1101,10 @@ export const postProgrammeClassification = async (req, res) => {
           rationale: result.eligible ? null : result.reason,
           overridden_by: null,
           overridden_at: null,
-          is_flagged: false,
-          flag_reason: null,
-          flagged_by: null,
-          flagged_at: null
+          is_flagged: autoFlag,
+    flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
+    flagged_by: autoFlag ? req.session.user.id : null,
+    flagged_at: autoFlag ? new Date() : null
         });
       }
     }
