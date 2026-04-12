@@ -104,6 +104,7 @@
             <table class="table align-middle">
               <thead>
                 <tr>
+                  <th>Programme Code</th>
                   <th>Programme Name</th>
                   <th>Assigned Date</th>
                 </tr>
@@ -113,7 +114,11 @@
                 <% admin.Programmes.forEach(programme => { %>
                   <% if (programme.UserProgramme.active) { %>
                     <tr>
-                      <td><%= programme.name %></td>
+                      <td><%= programme.programme_code %></td>
+                      <td><%= programme.name .split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%></td>
                       <td>
                         <%= new Date(programme.UserProgramme.assigned_date)
                           .toLocaleDateString('en-GB') %>
@@ -136,7 +141,7 @@
       <div class="card shadow-sm">
 
         <div class="card-header bg-white">
-          <h5 class="mb-0">Unassigned Programmes</h5>
+          <h5 class="mb-0">Previously Assigned Programmes</h5>
         </div>
 
         <div class="card-body table-responsive">
@@ -146,8 +151,9 @@
             <table class="table align-middle">
               <thead>
                 <tr>
+                  <th>Programme Code</th>
                   <th>Programme Name</th>
-                  <th>Status</th>
+                  <th>Unassigned Date</th>
                 </tr>
               </thead>
 
@@ -155,8 +161,18 @@
                 <% admin.Programmes.forEach(programme => { %>
                   <% if (!programme.UserProgramme.active) { %>
                     <tr>
-                      <td><%= programme.name %></td>
-                      <td>Inactive</td>
+                      <td><%= programme.programme_code %></td>
+                      <td><%= programme.name .split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%></td>
+                  <td>
+            <% if (programme.UserProgramme.unassigned_date) { %>
+              <%= new Date(programme.UserProgramme.unassigned_date).toLocaleDateString('en-GB') %>
+            <% } else { %>
+              —
+            <% } %>
+          </td>
                     </tr>
                   <% } %>
                 <% }) %>

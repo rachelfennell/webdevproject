@@ -32,7 +32,18 @@ const UserProgramme = sequelize.define('UserProgramme', {
   active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true
-  }
+  },
+    unassigned_date: {
+    type: DataTypes.DATE,
+    validate: {
+      isDate: { msg: 'Unasigned date must be a valid date' },
+      notInFuture(value) {
+        if (value && new Date(value) > new Date()) {
+          throw new Error('Unasigned date cannot be in the future');
+        }
+      }
+    }
+  },
 }, {
   tableName: 'user_programmes',
   timestamps: false,

@@ -40,7 +40,7 @@
 
   </nav>
 
-<div class="container mt-5">
+  <div class="container mt-5">
   <div class="row justify-content-center">
 
     <div class="col-12 col-lg-6">
@@ -50,7 +50,7 @@
         <h4 class="mb-3">Create New Programme</h4>
 
         <% if (error) { %>
-          <div class="alert alert-danger text-center shadow-sm">
+          <div class="alert alert-danger text-center">
             <%= error %>
           </div>
         <% } %>
@@ -64,55 +64,63 @@
 
           <div class="mb-3">
             <label class="form-label">Programme Code</label>
-            <input type="text" name="programme_code" class="form-control" required>
+            <input type="text" name="programme_code" class="form-control"
+              placeholder="HE000000" required>
+            <div class="form-text">Must be in format HE000000</div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Degree Type</label>
-            <input type="text" name="degree_type" class="form-control" required>
+            <select name="degree_type" class="form-control" required>
+              <option value="">Select degree type</option>
+              <option value="BSc">BSc</option>
+              <option value="BA">BA</option>
+              <option value="LLB">LLB</option>
+              <option value="BEng">BEng</option>
+            </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label">School</label>
-            <input type="text" name="school" class="form-control" required>
+            <select name="school" class="form-control" required>
+              <option value="">Select school</option>
+              <option value="EEECS">EEECS</option>
+              <option value="Law">Law</option>
+              <option value="Arts">Arts</option>
+            </select>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Year 2 Weight</label>
-            <input type="number" step="0.01" name="y2_weight" class="form-control" required>
+            <input type="number" step="0.01" name="y2_weight" class="form-control"
+              min="0" max="1" placeholder="e.g. 0.30" required>
+            <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Year 3 Weight</label>
-            <input type="number" step="0.01" name="y3_weight" class="form-control" required>
+            <input type="number" step="0.01" name="y3_weight" class="form-control"
+              min="0" max="1" placeholder="e.g. 0.70" required>
+               <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Resit Cap</label>
-            <input type="number" name="resit_cap" class="form-control" required>
+            <input type="number" name="resit_cap" class="form-control"
+              min="0" max="100" value="40" required>
+            <div class="form-text">Maximum mark a resit can contribute (0-100)</div>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Pass Mark</label>
-            <input type="number"
-                   class="form-control"
-                   name="pass_mark"
-                   value="40"
-                   min="0"
-                   max="100"
-                   required>
+            <input type="number" name="pass_mark" class="form-control"
+              min="0" max="100" value="40" required>
+            <div class="form-text">Minimum mark required to pass a module (0-100)</div>
           </div>
 
           <div class="d-flex justify-content-between mt-4">
-
-            <a href="/institutional/manageProgrammes" class="btn btn-secondary">
-              Cancel
-            </a>
-
-            <button type="submit" class="btn dashboardButton">
-              Create Programme
-            </button>
-
+            <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn dashboardButton">Create Programme</button>
           </div>
 
         </form>
@@ -122,6 +130,17 @@
 
   </div>
 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="pageSpacing"></div>
 

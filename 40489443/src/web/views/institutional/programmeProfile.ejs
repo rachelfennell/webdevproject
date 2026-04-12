@@ -120,47 +120,117 @@
 
         <div class="card-body table-responsive">
 
-          <% if (programme.Modules && programme.Modules.length > 0) { %>
+  <% const y1Modules = programme.Modules.filter(m => m.ProgrammeModule.active && m.ProgrammeModule.year_level === '1') %>
+  <% const y2Modules = programme.Modules.filter(m => m.ProgrammeModule.active && m.ProgrammeModule.year_level === '2') %>
+  <% const y3Modules = programme.Modules.filter(m => m.ProgrammeModule.active && m.ProgrammeModule.year_level === '3') %>
 
-            <table class="table align-middle">
-              <thead>
-                <tr>
-                  <th>Module Name</th>
-                  <th>Module Code</th>
-                  <th>Year Level</th>
-                  <th>Credits</th>
-                  <th>Mandatory</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+  <% if (programme.Modules && programme.Modules.length > 0) { %>
 
-              <tbody>
-                <% programme.Modules.forEach(module => { %>
-                  <% if (module.ProgrammeModule.active) { %>
-                    <tr>
-                      <td><%= module.name %></td>
-                      <td><%= module.module_code %></td>
-                      <td>Year <%= module.ProgrammeModule.year_level %></td>
-                      <td><%= module.ProgrammeModule.credits %></td>
-                      <td>
-                        <% if (module.ProgrammeModule.mandatory) { %>
-                          <span class="badge bg-primary">Mandatory</span>
-                        <% } else { %>
-                          <span class="badge bg-secondary">Optional</span>
-                        <% } %>
-                      </td>
-                      <td>Active</td>
-                    </tr>
-                  <% } %>
-                <% }) %>
-              </tbody>
-            </table>
+    <%# Year 1 %>
+    <h6 class="text-muted mt-2">Year 1</h6>
+    <% if (y1Modules.length > 0) { %>
+      <table class="table align-middle mb-4">
+        <thead class="table-light">
+          <tr>
+            <th>Module Name</th>
+            <th>Module Code</th>
+            <th>Credits</th>
+            <th>Mandatory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% y1Modules.forEach(module => { %>
+            <tr>
+              <td><%= module.name %></td>
+              <td><%= module.module_code %></td>
+              <td><%= module.ProgrammeModule.credits %></td>
+              <td>
+                <% if (module.ProgrammeModule.mandatory) { %>
+                  <span class="badge bg-primary">Mandatory</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Optional</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p class="text-muted small mb-4">No modules assigned for Year 1.</p>
+    <% } %>
 
-          <% } else { %>
-            <p>No active modules assigned.</p>
-          <% } %>
+    <%# Year 2 %>
+    <h6 class="text-muted">Year 2</h6>
+    <% if (y2Modules.length > 0) { %>
+      <table class="table align-middle mb-4">
+        <thead class="table-light">
+          <tr>
+            <th>Module Name</th>
+            <th>Module Code</th>
+            <th>Credits</th>
+            <th>Mandatory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% y2Modules.forEach(module => { %>
+            <tr>
+              <td><%= module.name %></td>
+              <td><%= module.module_code %></td>
+              <td><%= module.ProgrammeModule.credits %></td>
+              <td>
+                <% if (module.ProgrammeModule.mandatory) { %>
+                  <span class="badge bg-primary">Mandatory</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Optional</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p class="text-muted small mb-4">No modules assigned for Year 2.</p>
+    <% } %>
 
-        </div>
+    <%# Year 3 %>
+    <h6 class="text-muted">Year 3</h6>
+    <% if (y3Modules.length > 0) { %>
+      <table class="table align-middle mb-4">
+        <thead class="table-light">
+          <tr>
+            <th>Module Name</th>
+            <th>Module Code</th>
+            <th>Credits</th>
+            <th>Mandatory</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% y3Modules.forEach(module => { %>
+            <tr>
+              <td><%= module.name %></td>
+              <td><%= module.module_code %></td>
+              <td><%= module.ProgrammeModule.credits %></td>
+              <td>
+                <% if (module.ProgrammeModule.mandatory) { %>
+                  <span class="badge bg-primary">Mandatory</span>
+                <% } else { %>
+                  <span class="badge bg-secondary">Optional</span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <p class="text-muted small mb-4">No modules assigned for Year 3.</p>
+    <% } %>
+
+  <% } else { %>
+    <p class="text-muted">No active modules assigned.</p>
+  <% } %>
+
+</div>
+
       </div>
 
 
@@ -182,7 +252,7 @@
                   <th>Module Code</th>
                   <th>Year Level</th>
                   <th>Credits</th>
-                  <th>Status</th>
+                  
                 </tr>
               </thead>
 
@@ -194,7 +264,7 @@
                       <td><%= module.module_code %></td>
                       <td>Year <%= module.ProgrammeModule.year_level %></td>
                       <td><%= module.ProgrammeModule.credits %></td>
-                      <td>Inactive</td>
+                      
                     </tr>
                   <% } %>
                 <% }) %>

@@ -1,5 +1,5 @@
 
-import { User, Programme, UserProgramme, Module, ProgrammeModule } from '../../seeder/models/index.js';
+import { User, Programme, UserProgramme, Module, ProgrammeModule, Student } from '../../seeder/models/index.js';
 import sequelize from '../config/db.js';
 import { Op } from 'sequelize';
 
@@ -35,7 +35,10 @@ export const manageAdmins = async (req, res) => {
 export const viewAllAdminsPage = async (req, res) => {
   try {
     //Find all academic admins from users db
-    const admins = await User.findAll({ where: { role: 'academic_admin' } });
+    const admins = await User.findAll({
+  where: { role: 'academic_admin' },
+  order: [['first_name', 'ASC']]
+});
     res.render('institutional/viewAdmins', { user: req.session.user, admins });
   } catch (err) {
     console.error(err);
@@ -51,7 +54,8 @@ export const viewAdminProfile = async (req, res) => {
       where: { role: 'academic_admin' },
       include: {
         model: Programme,
-        through: { attributes: ['assigned_date', 'active'] },
+        through: { attributes: ['assigned_date', 'active', 'unassigned_date'] },
+        order: [['programme_code', 'ASC']]
       }
     });
 
@@ -76,7 +80,7 @@ export const getEditAdminPage = async (req, res) => {
       include: {
         model: Programme,
         through: {
-          attributes: ['assigned_date', 'active'],
+          attributes: ['assigned_date', 'active', 'unassigned_date'],
           where: { active: true }
         }
       }
@@ -93,6 +97,7 @@ export const getEditAdminPage = async (req, res) => {
         where: { id: {[Op.ne]: adminId} }, //Search and exclude for programmes that don't have adminId
 required: false
       }
+      
     });
 
     res.render('institutional/editAdmin', {
@@ -118,6 +123,21 @@ export const postAdminPage = async (req, res) => {
       return res.render('error', { message: 'Admin not found' });
     }
 
+// Check if admin has any active assigned programmes
+if(active!= 'on'){
+const assignedProgrammes = await UserProgramme.findOne({
+  where: {
+    user_id: adminId,
+    active: true
+  }
+});
+
+if (assignedProgrammes) {
+  return res.render('error', {
+    message: 'This admin cannot be deactivated as they have active programmes assigned. Please unassign all programmes first.'
+  });
+}
+}
 
     admin.username = username;
     admin.email = email;
@@ -152,12 +172,55 @@ const admin = await User.findByPk(adminId);
       return res.status(404).render('error', { message: 'Programme not found.' });
     }
 
-    await UserProgramme.create({
-      user_id: adminId,
-      programme_id: programmeId,
-      assigned_date: new Date(),
-      active: true
+   // Check if programme is already assigned to another active user
+    const existingAssignment = await UserProgramme.findOne({
+      where: {
+        programme_id: programmeId,
+        user_id: { [Op.ne]: adminId },
+        active: true
+      }, include: { model: User, attributes: ['first_name', 'last_name', 'username'] }
     });
+
+    if (existingAssignment) {
+      return res.render('error', { 
+    message: `This programme is already assigned to ${existingAssignment.User.first_name} ${existingAssignment.User.last_name} (${existingAssignment.User.username})` });
+    }
+
+const existingUserAssignment = await UserProgramme.findOne({
+      where: {
+        programme_id: programmeId,
+        user_id: adminId,
+        active: true
+      }
+    });
+
+  if (existingUserAssignment) {
+      return res.render('error', { message: 'This programme is already assigned to this officer.' });
+    }
+
+    // Check if this admin already has an inactive assignment for this programme
+    const previousAssignment = await UserProgramme.findOne({
+      where: {
+        user_id: adminId,
+        programme_id: programmeId
+      }
+    });
+
+    if (previousAssignment) {
+      // Reactivate existing record
+      previousAssignment.active = true;
+      previousAssignment.assigned_date = new Date();
+      await previousAssignment.save();
+    } else {
+
+      // Create new assignment
+      await UserProgramme.create({
+        user_id: adminId,
+        programme_id: programmeId,
+        assigned_date: new Date(),
+        active: true
+      });
+    }
 
     return res.redirect(`/institutional/editAdmin/${adminId}`);
   } catch (err) {
@@ -183,8 +246,23 @@ export const removeProgramme = async (req, res) => {
       return res.status(404).render('error', { message: 'Programme not found for this admin.' });
     }
 
-    userProgramme.active = false;
-    await userProgramme.save();
+    // Check if programme has active students
+    const activeStudents = await Student.findOne({
+      where: {
+        programme_id: programmeId,
+        active_student: true
+      }
+    });
+
+    if (activeStudents) {
+      return res.render('error', { 
+        message: 'This programme cannot be unassigned as it has active students enrolled. Please deactivate all students first.' 
+      });
+    }
+
+   userProgramme.active = false;
+userProgramme.unassigned_date = new Date();
+await userProgramme.save();
 
     res.redirect(`/institutional/adminProfile/${adminId}`);
   } catch (err) {
@@ -262,7 +340,12 @@ export const manageProgrammes = async (req, res) => {
 // View All Programmes
 export const viewProgrammes = async (req, res) => {
   try {
-    const programmes = await Programme.findAll();
+    const programmes = await Programme.findAll(
+ {
+  order: [['programme_code', 'ASC']]
+  });
+
+
     res.render('institutional/viewProgrammes', { user: req.session.user, programmes });
   } catch (err) {
     console.error(err);
@@ -278,7 +361,8 @@ export const viewProgrammeProfile = async (req, res) => {
       include: {
         model: Module,
         through: {
-          attributes: ['year_level', 'mandatory', 'credits', 'active']
+          attributes: ['year_level', 'mandatory', 'credits', 'active'],
+          order: [['module_code', 'ASC']]
         }
       }
     });
@@ -349,8 +433,38 @@ export const postEditProgrammePage = async (req, res) => {
     const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, pass_mark, active } = req.body;
 
     const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found' });
 
-    if (!programme) { return res.render('error', { message: 'Programme not found' }); }
+    // Programme code must be unique
+    const existingCode = await Programme.findOne({
+      where: {
+        programme_code,
+        id: { [Op.ne]: programmeId }
+      }
+    });
+
+if (existingCode) {
+      return res.render('error', { message: 'This programme code is already in use by another programme' });
+    }
+
+    // Weights together must equal 1
+    const y2 = parseFloat(y2_weight);
+    const y3 = parseFloat(y3_weight);
+
+    if (Math.abs(y2 + y3 - 1.0) > 0.001) {
+      return res.render('error', { message: 'Year 2 and Year 3 weights must add up to 1.0 (e.g. 0.30 and 0.70)' });
+    }
+
+    // Cannot inactivate if has active students
+    if (active !== 'on') {
+      const activeStudents = await Student.findOne({
+        where: { programme_id: programmeId, active_student: true }
+      });
+
+      if (activeStudents) {
+        return res.render('error', { message: 'This programme cannot be deactivated as it has active students enrolled. Please deactivate all students first.' });
+      }
+    }
 
     programme.name = name;
     programme.programme_code = programme_code;
@@ -365,6 +479,7 @@ export const postEditProgrammePage = async (req, res) => {
     await programme.save();
 
     return res.redirect(`/institutional/programmeProfile/${programmeId}`);
+
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Unable to update programme' });
@@ -375,16 +490,34 @@ export const postEditProgrammePage = async (req, res) => {
 export const assignModule = async (req, res) => {
   try {
     const programmeId = req.params.id;
-    const { moduleId, year_level, mandatory, credits  } = req.body;
+    const { moduleId, year_level, mandatory, credits } = req.body;
 
-const programme = await Programme.findByPk(programmeId);
- if (!programme) {
-      return res.status(404).render('error', { message: 'Programme not found.' });
-    }
+    const programme = await Programme.findByPk(programmeId);
+    if (!programme) return res.render('error', { message: 'Programme not found.' });
 
     const module = await Module.findByPk(moduleId);
- if (!module) {
-      return res.status(404).render('error', { message: 'Module not found.' });
+    if (!module) return res.render('error', { message: 'Module not found.' });
+
+    // Cannot assign a module already assigned to this programme
+    const existingModule = await ProgrammeModule.findOne({
+      where: {
+        programme_id: programmeId,
+        module_id: moduleId
+      }
+    });
+
+    if (existingModule) {
+      if (existingModule.active) {
+        return res.render('error', { message: 'This module is already assigned to this programme.' });
+      } else {
+        // Reactivate if previously removed
+        existingModule.active = true;
+        existingModule.year_level = year_level;
+        existingModule.mandatory = mandatory;
+        existingModule.credits = credits;
+        await existingModule.save();
+        return res.redirect(`/institutional/editProgramme/${programmeId}`);
+      }
     }
 
     await ProgrammeModule.create({
@@ -393,17 +526,16 @@ const programme = await Programme.findByPk(programmeId);
       year_level,
       mandatory,
       credits,
-   
       active: true
     });
 
     return res.redirect(`/institutional/editProgramme/${programmeId}`);
+
   } catch (err) {
     console.error(err);
     res.render('error', { message: 'Error assigning module to programme' });
   }
 };
-
 
 // Remove Assigned module from programme 
 export const removeModule = async (req, res) => {
@@ -447,10 +579,20 @@ export const getCreateProgrammePage = async (req, res) => {
 };
 
 export const postCreateProgrammePage = async (req, res) => {
-
-  const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap }  = req.body;
+  const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, pass_mark } = req.body;
 
   try {
+    // Check weights equal 1
+    const y2 = parseFloat(y2_weight);
+    const y3 = parseFloat(y3_weight);
+
+    if (Math.abs(y2 + y3 - 1.0) > 0.001) {
+      return res.render('institutional/createProgramme', {
+        user: req.session.user,
+        error: 'Year 2 and Year 3 weights must add up to 1.0 (e.g. 0.30 and 0.70)'
+      });
+    }
+
     const newProgramme = Programme.build({
       name,
       programme_code,
@@ -459,6 +601,7 @@ export const postCreateProgrammePage = async (req, res) => {
       y2_weight,
       y3_weight,
       resit_cap,
+      pass_mark,
       active: true
     });
 

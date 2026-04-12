@@ -99,10 +99,12 @@
             <label class="form-check-label">Active</label>
           </div>
 
+           <div class="d-flex gap-2">
           <button type="submit" class="btn dashboardButton w-100">
             Save Changes
           </button>
-
+          <a href="/institutional/adminProfile/<%= admin.id %>" class="btn btn-secondary">Cancel</a>
+</div>
         </form>
 
       </div>
@@ -146,7 +148,10 @@
                 <% admin.Programmes.forEach(programme => { %>
 
                   <tr>
-                    <td><%= programme.name %></td>
+                    <td><%= programme.name.split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%></td>
                     <td><%= programme.programme_code %></td>
                     <td><%= programme.degree_type %></td>
 
@@ -217,7 +222,11 @@
 
               <% activeProgrammes.forEach(programme => { %>
                 <option value="<%= programme.id %>">
-                  <%= programme.name %> - <%= programme.programme_code %>
+                  <%= programme.degree_type %>
+                  <%= programme.name.split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%> - <%= programme.programme_code %>
                 </option>
               <% }) %>
 
@@ -232,6 +241,15 @@
 
       </div>
     </div>
+  </div>
+</div>
+
+<div class="container mt-5 mb-5">
+  <div class="d-flex justify-content-end">
+    <a href="/institutional/adminProfile/<%= admin.id %>"
+       class="btn btn-sm dashboardButton">
+      Back to Admin Profile
+    </a>
   </div>
 </div>
 
