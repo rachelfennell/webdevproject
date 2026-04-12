@@ -59,147 +59,97 @@
     </div>
 
   </nav>
- <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1>Create a New Student</h1>
-        
-      </div>
-      
-    </div>
+<div class="container mt-5">
+  <div class="row justify-content-center">
 
-    <% if (error) { %>
-      <div class="alert alert-danger"><%= error %></div>
-    <% } %>
+    <div class="col-12 col-lg-8">
 
-    <div class="card">
-      <div class="card-body">
+      <div class="card shadow-sm p-4">
+
+        <h4 class="mb-3">Create a New Student</h4>
+
+        <% if (error) { %>
+          <div class="alert alert-danger text-center shadow-sm">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <% if (message) { %>
+          <div class="alert alert-warning text-center shadow-sm">
+            <%= message %>
+          </div>
+        <% } %>
+
         <form action="/academic/createStudent" method="POST">
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="student_number" class="form-label">Student Number</label>
-              <input
-                type="text"
-                class="form-control"
-                id="student_number"
-                name="student_number"
-                required
-                maxlength="10"
-                placeholder="10 digit number" />
-              <div class="form-text">Must be exactly 10 digits, numbers only.</div>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="programme_id" class="form-label">Programme</label>
-              <select class="form-control" id="programme_id" name="programme_id" required>
-                <option value="">Select a programme</option>
-                <% programmes.forEach(up => { %>
-                  <option value="<%= up.Programme.id %>">
-                    <%= up.Programme.name.split(' ')
-  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-  .join(' ') %> — <%= up.Programme.programme_code %>
-                  </option>
-                <% }) %>
-              </select>
+          <div class="mb-3">
+            <label class="form-label">Student Number</label>
+            <input type="text" name="student_number" class="form-control" maxlength="10" placeholder="10 digit number" required>
+            <div class="form-text">Must be exactly 10 digits, numbers only.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Programme</label>
+            <select name="programme_id" class="form-control" required>
+              <option value="">Select a programme</option>
+              <% programmes.forEach(up => { %>
+                <option value="<%= up.Programme.id %>">
+                  <%= up.Programme.name.split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(' ') %> — <%= up.Programme.programme_code %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Date of Birth</label>
+            <input type="date" name="dob" class="form-control" required>
+            <div class="form-text">Student must be between 16 and 100 years old.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Enrolled Date</label>
+            <input type="date" name="enrolled_date" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Graduation Year</label>
+            <input type="number" name="graduation_year" class="form-control" min="1990" max="2100" required>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="active_student" name="active_student" value="on" checked>
+              <label class="form-check-label" for="active_student">Mark as active</label>
             </div>
           </div>
 
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="first_name" class="form-label">First Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="first_name"
-                name="first_name"
-                required />
-            </div>
-            <div class="col-md-6 mb-3">
-              <label for="last_name" class="form-label">Last Name</label>
-              <input
-                type="text"
-                class="form-control"
-                id="last_name"
-                name="last_name"
-                required />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label for="dob" class="form-label">Date of Birth</label>
-              <input
-                type="date"
-                class="form-control"
-                id="dob"
-                name="dob"
-                required />
-              <div class="form-text">Student must be between 16 and 100 years old.</div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label for="enrolled_date" class="form-label">Enrolled Date</label>
-              <input
-                type="date"
-                class="form-control"
-                id="enrolled_date"
-                name="enrolled_date"
-                required />
-            </div>
-            <div class="col-md-4 mb-3">
-              <label for="graduation_year" class="form-label">Graduation Year</label>
-              <input
-                type="number"
-                class="form-control"
-                id="graduation_year"
-                name="graduation_year"
-                min="1990"
-                max="2100"
-                required />
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label"></label>
-              <div class="form-check mt-1">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="active_student"
-                  name="active_student"
-                  value="on"
-                  checked />
-                <label class="form-check-label" for="active_student">
-                  Mark as active
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex gap-2 mt-2">
-            <button type="submit" class="btn dashboardButton">Add Student</button>
+          <div class="d-flex justify-content-between mt-4">
             <a href="/academic/studentList" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn dashboardButton">Add Student</button>
           </div>
 
         </form>
+
       </div>
     </div>
-
-  </div>
-
-<div class="container mt-5 mb-5">
-  <div class="d-flex justify-content-end">
-   <a href="/academic/studentList" class="btn dashboardButton">Back to Student List</a>
 
   </div>
 </div>
 
-
-
-
-
-  <div class="pageSpacing"></div>
+<div class="pageSpacing"></div>
 
 </body>
 </html>

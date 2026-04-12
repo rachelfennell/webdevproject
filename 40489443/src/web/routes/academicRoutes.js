@@ -191,5 +191,12 @@ router.post(
   academicController.postAddStudent
 );
 
+//Reactivate a Student
+router.post(
+  '/academic/reactivateStudent/:id',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.reactivateStudent
+);
 
 export default router;

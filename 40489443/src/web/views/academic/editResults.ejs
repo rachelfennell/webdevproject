@@ -62,27 +62,41 @@
 
  <div class="container mt-5">
 
-  <div class="row justify-content-center">
-
-    <div class="col-12 col-lg-10">
 
 
-     
-      <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div>
-          <h2 class="mb-1">Edit Results</h2>
-          <p class="text-muted mb-0">
-            <%= student.first_name %> <%= student.last_name %>
-            (<%= student.student_number %>) —
-            <%= student.Programme.name .split(' ')
+  <div class="card shadow-sm p-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="mb-0">
+          <%= student.first_name %> <%= student.last_name %></h4>
+             
+ <p class="text-muted mb-0">
+         <%= student.Programme.name .split(' ')
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ')
 %>
-          </p>
-        </div>
+        </p>
 
+
+         
       </div>
+      <div class="text-end">
+        <p class="mb-0"><strong>Student Number: </strong> <%= student.student_number %> </p>
+      </div>
+    </div>
+  </div>
+
+
+ 
+
+  
+
+
+
+
+     
+    
       <% if (typeof error !== 'undefined' && error) { %>
         <div class="alert alert-danger text-center">
           <%= error %>
@@ -156,7 +170,7 @@
 
                   <div class="col-md-5 mb-3">
                     <label class="form-label">
-                      Resit Mark <span class="text-muted">(optional)</span>
+                      Resit Mark <span class="text-muted">(Optional)</span>
                     </label>
                     <input type="number"
                            class="form-control"

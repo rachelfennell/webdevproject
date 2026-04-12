@@ -61,7 +61,7 @@ export const studentList = async (req, res) => {
         model: Programme,
         attributes: ['id', 'name', 'programme_code']
       },
-      order: [['last_name', 'ASC']]
+      order: [['student_number', 'ASC']]
     });
 
     const inactiveStudents = await Student.findAll({
@@ -70,7 +70,7 @@ export const studentList = async (req, res) => {
         model: Programme,
         attributes: ['id', 'name', 'programme_code']
       },
-      order: [['last_name', 'ASC']]
+      order: [['student_number', 'ASC']]
     });
 
 
@@ -211,8 +211,17 @@ export const postEditStudentPage = async (req, res) => {
     return res.redirect(`/academic/studentProfile/${studentId}`);
 
   } catch (err) {
-    console.error(err);
-    res.render('error', { message: 'Unable to update student' });
+       console.error(err);
+
+    let errorMessage = 'Something went wrong';
+
+    if (err.name === 'SequelizeValidationError') {
+      errorMessage = err.errors[0].message;
+    } else if (err.name === 'SequelizeUniqueConstraintError') {
+      errorMessage = err.errors[0].message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
   }
 };
 
@@ -246,6 +255,27 @@ export const deactivateStudent = async (req, res) => {
     res.render('error', { message: 'Unable to deactivate student' });
   }
 };
+
+// Reactivate a Student Again
+export const reactivateStudent = async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    const student = await Student.findByPk(studentId);
+    if (!student) return res.render('error', { message: 'Student not found' });
+
+    student.active_student = true;
+    await student.save();
+
+    return res.redirect(`/academic/studentProfile/${studentId}`);
+
+  } catch (err) {
+    console.error(err);
+    res.render('error', { message: 'Unable to reactivate student' });
+  }
+};
+
+
 
 // Programme Dashboard
 export const programmeDashboard = async (req, res) => {
@@ -300,8 +330,7 @@ export const programmeDashboard = async (req, res) => {
 // Academic Admin Edit Programme Page
 export const getEditProgrammePage = async (req, res) => {
   try {
-
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
@@ -309,6 +338,7 @@ export const getEditProgrammePage = async (req, res) => {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
       } });
+
     const programmeId = req.params.id;
 
     const programme = await Programme.findByPk(programmeId, {
@@ -336,8 +366,7 @@ export const getEditProgrammePage = async (req, res) => {
       user: req.session.user,
       programme,
       activeModules,
-      query: req.query,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -355,8 +384,38 @@ export const postEditProgrammePage = async (req, res) => {
     const { name, programme_code, degree_type, school, y2_weight, y3_weight, resit_cap, pass_mark, active } = req.body;
 
     const programme = await Programme.findByPk(programmeId);
-
     if (!programme) return res.render('error', { message: 'Programme not found' });
+
+    // Programme code must be unique
+    const existingCode = await Programme.findOne({
+      where: {
+        programme_code,
+        id: { [Op.ne]: programmeId }
+      }
+    });
+
+    if (existingCode) {
+      return res.render('error', { message: 'This programme code is already in use by another programme' });
+    }
+
+    // Weights together must equal 1
+    const y2 = parseFloat(y2_weight);
+    const y3 = parseFloat(y3_weight);
+
+    if (Math.abs(y2 + y3 - 1.0) > 0.001) {
+      return res.render('error', { message: 'Year 2 and Year 3 weights must add up to 1.0 (e.g. 0.30 and 0.70)' });
+    }
+
+    // Cannot inactivate if has active students
+    if (active !== 'on') {
+      const activeStudents = await Student.findOne({
+        where: { programme_id: programmeId, active_student: true }
+      });
+
+      if (activeStudents) {
+        return res.render('error', { message: 'This programme cannot be deactivated as it has active students enrolled. Please deactivate all students first.' });
+      }
+    }
 
     programme.name = name;
     programme.programme_code = programme_code;
@@ -374,7 +433,54 @@ export const postEditProgrammePage = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to update programme' });
+
+    let errorMessage = 'Something went wrong';
+
+    if (err.name === 'SequelizeValidationError') {
+      errorMessage = err.errors[0].message;
+    }
+    else if (err.name === 'SequelizeUniqueConstraintError') {
+      errorMessage = err.errors[0].message;
+    }
+    else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    const programme = await Programme.findByPk(req.params.id, {
+      include: {
+        model: Module,
+        through: {
+          attributes: ['year_level', 'mandatory', 'credits', 'active'],
+          where: { active: true }
+        }
+      }
+    });
+
+    const activeModules = await Module.findAll({
+      where: { active: true },
+      include: {
+        model: Programme,
+        where: { id: { [Op.ne]: req.params.id } },
+        required: false
+      }
+    });
+
+    const userId = req.session.user.id;
+    const userProgrammes = await UserProgramme.findAll({
+      where: { user_id: userId, active: true },
+      include: {
+        model: Programme,
+        attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
+      }
+    });
+
+    return res.status(400).render('academic/editProgramme', {
+      user: req.session.user,
+      programme,
+      activeModules,
+      userProgrammes,
+      error: errorMessage
+    });
   }
 };
 
@@ -385,36 +491,41 @@ export const assignModule = async (req, res) => {
     const { moduleId, year_level, mandatory, credits } = req.body;
 
     const programme = await Programme.findByPk(programmeId);
-    if (!programme) return res.status(404).render('error', { message: 'Programme not found.' });
+    if (!programme) return res.render('error', { message: 'Programme not found.' });
 
     const module = await Module.findByPk(moduleId);
-    if (!module) return res.status(404).render('error', { message: 'Module not found.' });
+    if (!module) return res.render('error', { message: 'Module not found.' });
 
-    const existing = await ProgrammeModule.findOne({
-      where: { programme_id: programmeId, module_id: moduleId }
+    // Cannot assign a module already assigned to this programme
+    const existingModule = await ProgrammeModule.findOne({
+      where: {
+        programme_id: programmeId,
+        module_id: moduleId
+      }
     });
 
-    if (existing) {
-      if (!existing.active) {
-        existing.active = true;
-        existing.year_level = year_level;
-        existing.mandatory = mandatory;
-        existing.credits = credits;
-        await existing.save();
+    if (existingModule) {
+      if (existingModule.active) {
+        return res.render('error', { message: 'This module is already assigned to this programme.' });
       } else {
-        return res.redirect(`/academic/editProgramme/${programmeId}?error=Module already assigned`);
+        // Reactivate if previously removed
+        existingModule.active = true;
+        existingModule.year_level = year_level;
+        existingModule.mandatory = mandatory;
+        existingModule.credits = credits;
+        await existingModule.save();
+        return res.redirect(`/academic/editProgramme/${programmeId}`);
       }
-    } else {
-      await ProgrammeModule.create({
-        programme_id: programmeId,
-        module_id: moduleId,
-        year_level,
-        mandatory,
-        credits,
-       
-        active: true
-      });
     }
+
+    await ProgrammeModule.create({
+      programme_id: programmeId,
+      module_id: moduleId,
+      year_level,
+      mandatory,
+      credits,
+      active: true
+    });
 
     return res.redirect(`/academic/editProgramme/${programmeId}`);
 
@@ -448,9 +559,15 @@ export const removeModule = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Error removing module from programme' });
+    res.status(500).render('error', { message: 'Error removing module from programme' });
   }
 };
+
+
+
+
+
+
 
 // View All Students Assigned to a Programme
 export const programmeStudentList = async (req, res) => {
@@ -1058,18 +1175,26 @@ export const getAddStudentPage = async (req, res) => {
 };
 
 export const postAddStudent = async (req, res) => {
-  try {
-    const { student_number, first_name, last_name, dob, programme_id, enrolled_date, graduation_year } = req.body;
+  const { student_number, first_name, last_name, dob, programme_id, enrolled_date, graduation_year } = req.body;
 
+  try {
     const existing = await Student.findOne({ where: { student_number } });
+    
     if (existing) {
       const userId = req.session.user.id;
       const userProgrammes = await UserProgramme.findAll({
         where: { user_id: userId, active: true },
-        include: { model: Programme, attributes: ['id', 'name', 'programme_code'] }
+        include: { model: Programme, attributes: ['id', 'name', 'programme_code', 'degree_type', 'school'] }
       });
-      return res.render('academic/createStudent', {
+
+
+
+      return res.status(400).render('academic/createStudent', {
         user: req.session.user,
+          userProgrammes,
+      message: userProgrammes.length === 0
+        ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
+        : null,
         programmes: userProgrammes,
         error: 'A student with this student number already exists'
       });
@@ -1086,12 +1211,37 @@ export const postAddStudent = async (req, res) => {
       active_student: true
     });
 
-await newStudent.save();
+    await newStudent.save();
 
     return res.redirect('/academic/studentList');
 
   } catch (err) {
     console.error(err);
-    res.render('error', { message: 'Unable to create student' });
+
+    let errorMessage = 'Something went wrong';
+
+    if (err.name === 'SequelizeValidationError') {
+      errorMessage = err.errors[0].message;
+    } else if (err.name === 'SequelizeUniqueConstraintError') {
+      errorMessage = err.errors[0].message;
+    } else if (err.message) {
+      errorMessage = err.message;
+    }
+
+    const userId = req.session.user.id;
+    const userProgrammes = await UserProgramme.findAll({
+      where: { user_id: userId, active: true },
+      include: { model: Programme, attributes: ['id', 'name', 'programme_code', 'degree_type', 'school'] }
+    });
+
+    return res.status(400).render('academic/createStudent', {
+      user: req.session.user,
+      programmes: userProgrammes,
+      error: errorMessage,
+        userProgrammes,
+      message: userProgrammes.length === 0
+        ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
+        : null
+    });
   }
 };

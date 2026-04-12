@@ -62,16 +62,12 @@
 
  <div class="container mt-4">
 
+  <div class="card shadow-sm p-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1><%= module.name %></h1>
   
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1><%= module.name %></h1>
-
-      <p class="text-muted mb-0">
-        Module Code: <%= module.module_code %>
-      </p>
-
-      <% if (programmeModule) { %>
+        <% if (programmeModule) { %>
         <p class="text-muted mb-0">
           Year Level: Year <%= programmeModule.year_level %> |
           Credits: <%= programmeModule.credits %>
@@ -83,10 +79,16 @@
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ') %>
       </p>
-    </div>
 
- 
+      </div>
+      <div class="text-end">
+        <p class="mb-0"><strong>Code:</strong>  <%= module.module_code %></p>
+      </div>
+    </div>
   </div>
+
+
+  
 
   <div class="card shadow-sm">
 
