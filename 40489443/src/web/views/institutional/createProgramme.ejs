@@ -40,73 +40,91 @@
 
   </nav>
 
- <div class="container">
-    <h2>Create New Programme</h2>
+<div class="container mt-5">
+  <div class="row justify-content-center">
 
+    <div class="col-12 col-lg-6">
 
-    <form action="/institutional/createProgramme" method="POST">
+      <div class="card shadow-sm p-4">
 
-      <!-- name -->
-      <div class="mb-3">
-        <label class="form-label">Programme Name</label>
-        <input type="text" name="name" class="form-control" required>
+        <h4 class="mb-3">Create New Programme</h4>
+
+        <% if (error) { %>
+          <div class="alert alert-danger text-center shadow-sm">
+            <%= error %>
+          </div>
+        <% } %>
+
+        <form action="/institutional/createProgramme" method="POST">
+
+          <div class="mb-3">
+            <label class="form-label">Programme Name</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Programme Code</label>
+            <input type="text" name="programme_code" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Degree Type</label>
+            <input type="text" name="degree_type" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">School</label>
+            <input type="text" name="school" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Year 2 Weight</label>
+            <input type="number" step="0.01" name="y2_weight" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Year 3 Weight</label>
+            <input type="number" step="0.01" name="y3_weight" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Resit Cap</label>
+            <input type="number" name="resit_cap" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Pass Mark</label>
+            <input type="number"
+                   class="form-control"
+                   name="pass_mark"
+                   value="40"
+                   min="0"
+                   max="100"
+                   required>
+          </div>
+
+          <div class="d-flex justify-content-between mt-4">
+
+            <a href="/institutional/manageProgrammes" class="btn btn-secondary">
+              Cancel
+            </a>
+
+            <button type="submit" class="btn dashboardButton">
+              Create Programme
+            </button>
+
+          </div>
+
+        </form>
+
       </div>
+    </div>
 
-      <!-- programme_code -->
-      <div class="mb-3">
-        <label class="form-label">Programme Code</label>
-        <input type="text" name="programme_code" class="form-control" required>
-      </div>
-
-      <!-- degree_type -->
-      <div class="mb-3">
-        <label class="form-label">Degree Type</label>
-        <input type="text" name="degree_type" class="form-control" required>
-      </div>
-
-      <!-- school -->
-      <div class="mb-3">
-        <label class="form-label">School</label>
-        <input type="text" name="school" class="form-control" required>
-      </div>
-
-     <!-- y2_weight -->
-      <div class="mb-3">
-        <label class="form-label">Y2 Weight</label>
-        <input type="text" name="y2_weight" class="form-control" required>
-      </div>
-
-  <!-- y3_weight -->
-      <div class="mb-3">
-        <label class="form-label">Y3 Weight</label>
-        <input type="text" name="y3_weight" class="form-control" required>
-      </div>
-
-        <!-- resit_cap -->
-      <div class="mb-3">
-        <label class="form-label">Resit Cap</label>
-        <input type="text" name="resit_cap" class="form-control" required>
-      </div>
-
-      <div class="form-group mb-3">
-  <label for="pass_mark">Pass Mark</label>
-  <input
-    type="number"
-    class="form-control"
-    id="pass_mark"
-    name="pass_mark"
-    value="<%= typeof programme !== 'undefined' ? programme.pass_mark : 40 %>"
-    min="0"
-    max="100"
-    required />
+  </div>
 </div>
 
-      <!-- Submit -->
-      <button type="submit" class="btn btn-primary">Create Programme</button>
-      <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
+<div class="pageSpacing"></div>
 
-    </form>
-  </div>
 
 </body>
 </html>
