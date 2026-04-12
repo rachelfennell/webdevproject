@@ -35,3 +35,6 @@ Improve
 25. When editing a student, makes you redo the enrolled date every time
 26. Shouldn't let you inactivate programme with active students
 27. Something in for adding in already assigned programmes - get code from other page
+28. Flagged student error
+29. If a student doesn't get a pass in classification, automatically flag
+30. Test classification rules if change limits
