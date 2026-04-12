@@ -3,95 +3,206 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= module.name %> Results | HEdClass</title>
+  <title>Academic Admin Dashboard | HEdClass</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="/styles/ui.css">
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container">
-      <a class="navbar-brand" href="/academic/dashboard">HEdClass</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
-          </li>
-        </ul>
-      </div>
+
+<body><nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+ <%# Top row %>
+    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+      <a class="navbar-brand mb-0" href="/academic/dashboard">
+        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+      </a>
+      <span class="text-white">Logged in as <%= user.first_name %> <%= user.last_name %></span>
     </div>
+
+  <%# Bottom row %>
+  <div class="w-100 py-2 d-flex justify-content-end">
+      <ul class="navbar-nav flex-row gap-3">
+        <li class="nav-item">
+        <a class="nav-link" href="/academic/dashboard">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/academic/studentList">Students List</a>
+      </li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+    Assigned Programmes
+  </a>
+  <ul class="dropdown-menu">
+  <% if (userProgrammes && userProgrammes.length > 0) { %>
+    <% userProgrammes.forEach(userProgramme => { %>
+      <li>
+        <a class="dropdown-item" href="/academic/programmeDashboard/<%= userProgramme.Programme.id %>">
+          <%= userProgramme.Programme.name  .split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%>
+           
+        </a>
+      </li>
+    <% }) %>
+  <% } else { %>
+    <li><span class="dropdown-item text-muted">No programmes assigned</span></li>
+  <% } %>
+</ul>
+</li>
+      <li class="nav-item">
+        <a class="nav-link" href="/academic/auditLog">Audit Log</a>
+      </li>
+       <li class="nav-item">
+          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </li>
+      </ul>
+    </div>
+
   </nav>
 
-  <div class="container">
+ <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1><%= module.name %></h1>
-        <p class="text-muted mb-0">Module Code: <%= module.module_code %></p>
-        <% if (programmeModule) { %>
-          <p class="text-muted mb-0">Year Level: Year <%= programmeModule.year_level %> | Credits: <%= programmeModule.credits %></p>
-        <% } %>
-        <p class="text-muted mb-0">Programme: <%= programme.name %></p>
-      </div>
-      <a href="/academic/programmeDashboard/<%= programme.id %>" class="btn btn-secondary">
-        Back to Programme
-      </a>
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1><%= module.name %></h1>
+
+      <p class="text-muted mb-0">
+        Module Code: <%= module.module_code %>
+      </p>
+
+      <% if (programmeModule) { %>
+        <p class="text-muted mb-0">
+          Year Level: Year <%= programmeModule.year_level %> |
+          Credits: <%= programmeModule.credits %>
+        </p>
+      <% } %>
+
+      <p class="text-muted mb-0">
+        Programme: <%= programme.name.split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ') %>
+      </p>
     </div>
 
-    <% if (students.length === 0) { %>
-      <div class="alert alert-info">No active students on this programme.</div>
-    <% } else { %>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Student Number</th>
-            <th>Name</th>
-            <th>Original Mark</th>
-            <th>Resit Mark</th>
-            <th>Overall Mark</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% students.forEach(student => { %>
-            <%
-              const original = originalResults.find(r => r.student_id === student.id);
-              const resit = resitResults.find(r => r.student_id === student.id);
-              const allResults = [...originalResults, ...resitResults];
-              const overallMark = getOverallMark(module.id, allResults.filter(r => r.student_id === student.id), programme.resit_cap);
-            %>
+ 
+  </div>
+
+  <div class="card shadow-sm">
+
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Student Results</h5>
+    </div>
+
+    <div class="card-body table-responsive">
+
+      <% if (students.length === 0) { %>
+
+        <p class="text-muted mb-0">No active students on this programme.</p>
+
+      <% } else { %>
+
+        <table class="table table-hover align-middle mb-0">
+
+          <thead class="table-light">
             <tr>
-              <td><%= student.student_number %></td>
-              <td><%= student.first_name %> <%= student.last_name %></td>
-              <td><%= original ? original.mark + '%' : '—' %></td>
-              <td><%= resit ? resit.mark + '%' : '—' %></td>
-              <td><%= overallMark !== null ? overallMark + '%' : '—' %></td>
-              <td>
-                <% if (overallMark !== null) { %>
-                  <% if (overallMark >= programme.pass_mark) { %>
-                    <span class="badge bg-success">Pass</span>
-                  <% } else { %>
-                    <span class="badge bg-danger">Fail</span>
-                  <% } %>
-                <% } else { %>
-                  <span class="badge bg-secondary">No Result</span>
-                <% } %>
-              </td>
-              <td>
-                <a href="/academic/editResults/<%= student.id %>?from=/academic/moduleResults/<%= programme.id %>/<%= module.id %>"
-                   class="btn btn-primary btn-sm">
-                  Edit Results
-                </a>
-              </td>
+              <th>Student Number</th>
+              <th>Name</th>
+              <th>Original Mark</th>
+              <th>Resit Mark</th>
+              <th>Overall Mark</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    <% } %>
+          </thead>
+
+          <tbody>
+
+            <% students.forEach(student => { %>
+
+              <%
+                const original = originalResults.find(r => r.student_id === student.id);
+                const resit = resitResults.find(r => r.student_id === student.id);
+
+                const allResults = [...originalResults, ...resitResults];
+
+                const studentResults = allResults.filter(r => r.student_id === student.id);
+
+                const overallMark = getOverallMark(
+                  module.id,
+                  studentResults,
+                  programme.resit_cap
+                );
+              %>
+
+              <tr>
+
+                <td><%= student.student_number %></td>
+
+                <td>
+                  <%= student.first_name %> <%= student.last_name %>
+                </td>
+
+                <td>
+                  <%= original ? original.mark + '%' : '—' %>
+                </td>
+
+                <td>
+                  <%= resit ? resit.mark + '%' : '—' %>
+                </td>
+
+                <td>
+                  <%= overallMark !== null ? overallMark + '%' : '—' %>
+                </td>
+
+                <td>
+                  <% if (overallMark !== null) { %>
+
+                    <% if (overallMark >= programme.pass_mark) { %>
+                      <span class="badge bg-success">Pass</span>
+                    <% } else { %>
+                      <span class="badge bg-danger">Fail</span>
+                    <% } %>
+
+                  <% } else { %>
+                    <span class="badge bg-secondary">No Result</span>
+                  <% } %>
+                </td>
+
+                <td>
+                  <a href="/academic/editResults/<%= student.id %>?from=/academic/moduleResults/<%= programme.id %>/<%= module.id %>"
+                     class="btn dashboardButton btn-sm">
+                    Edit
+                  </a>
+                </td>
+
+              </tr>
+
+            <% }) %>
+
+          </tbody>
+
+        </table>
+
+      <% } %>
+
+    </div>
 
   </div>
+
+</div>
+
+<div class="container mt-5 mb-5">
+ 
+      <div class="d-flex justify-content-end">
+          <a href="/academic/programmeDashboard/<%= programme.id %>" class="btn dashboardButton">
+            Back to Programme Dashboard
+          </a>
+        
+  </div>
+</div>
+
+<div class="pageSpacing"></div>
 
 </body>
 </html>

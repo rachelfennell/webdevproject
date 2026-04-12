@@ -3,219 +3,308 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Classification | HEdClass</title>
+  <title>Academic Admin Dashboard | HEdClass</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="/styles/ui.css">
 </head>
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-    <div class="container">
-      <a class="navbar-brand" href="/academic/dashboard">HEdClass</a>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <span class="nav-link">Logged in as <%= user.first_name %> <%= user.last_name %></span>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link btn btn-outline-danger btn-sm" href="/logout">Logout</a>
-          </li>
-        </ul>
-      </div>
+
+<body><nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+ <%# Top row %>
+    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+      <a class="navbar-brand mb-0" href="/academic/dashboard">
+        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+      </a>
+      <span class="text-white">Logged in as <%= user.first_name %> <%= user.last_name %></span>
     </div>
+
+  <%# Bottom row %>
+  <div class="w-100 py-2 d-flex justify-content-end">
+      <ul class="navbar-nav flex-row gap-3">
+        <li class="nav-item">
+        <a class="nav-link" href="/academic/dashboard">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/academic/studentList">Students List</a>
+      </li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+    Assigned Programmes
+  </a>
+  <ul class="dropdown-menu">
+  <% if (userProgrammes && userProgrammes.length > 0) { %>
+    <% userProgrammes.forEach(userProgramme => { %>
+      <li>
+        <a class="dropdown-item" href="/academic/programmeDashboard/<%= userProgramme.Programme.id %>">
+          <%= userProgramme.Programme.name  .split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+%>
+           
+        </a>
+      </li>
+    <% }) %>
+  <% } else { %>
+    <li><span class="dropdown-item text-muted">No programmes assigned</span></li>
+  <% } %>
+</ul>
+</li>
+      <li class="nav-item">
+        <a class="nav-link" href="/academic/auditLog">Audit Log</a>
+      </li>
+       <li class="nav-item">
+          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </li>
+      </ul>
+    </div>
+
   </nav>
 
-  <div class="container">
+  <div class="container mt-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1>Classification</h1>
-        <p class="text-muted mb-0">
-          <%= student.first_name %> <%= student.last_name %>
-          (<%= student.student_number %>) —
-          <%= student.Programme.name %>
+  <div class="row g-4">
+
+    
+    <div class="col-12 col-lg-4">
+
+      <div class="card shadow-sm p-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">
+            <%= student.first_name %> <%= student.last_name %>
+          </h4>
+
+
+        </div>
+
+        <hr>
+
+        <p><strong>Student Number:</strong> <%= student.student_number %></p>
+
+        <p><strong>Programme:</strong>
+          <%= student.Programme.name.split(' ')
+  .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+  .join(' ')
+          %>
+          (<%= student.Programme.programme_code %>)
         </p>
+
+        <p><strong>Degree Type:</strong> <%= student.Programme.degree_type %></p>
+
+        <p><strong>School:</strong> <%= student.Programme.school %></p>
+
+        <p><strong>Graduation Year:</strong> <%= student.graduation_year %></p>
+
       </div>
-      <a href="/academic/studentProfile/<%= student.id %>" class="btn btn-secondary">
-        Back to Student Profile
-      </a>
+
     </div>
 
-    <%# Run Classification %>
-    <div class="card mb-4">
-      <div class="card-header bg-white">
-        <h5 class="mb-0">Run Classification</h5>
-      </div>
-      <div class="card-body">
-        <p class="text-muted">Click the button below to run the classification engine for this student based on their current results.</p>
-        <form action="/academic/classification/<%= student.id %>" method="POST">
-          <button type="submit" class="btn btn-primary"
-            onclick="return confirm('Are you sure you want to run the classification for this student?')">
-            Run Classification
-          </button>
-        </form>
-      </div>
-    </div>
+    <!-- RIGHT -->
+    <div class="col-12 col-lg-8">
 
-    <%# Classification Result %>
-    <% if (classification) { %>
+     
+      <div class="card shadow-sm mb-4">
 
-      <div class="card mb-4">
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Run Classification</h5>
+        </div>
+
+        <div class="card-body">
+          <p class="text-muted">
+            Run the classification engine using current results.
+          </p>
+
+          <form action="/academic/classification/<%= student.id %>" method="POST">
+            <button type="submit"
+              class="btn btn-primary"
+              onclick="return confirm('Run classification for this student?')">
+              Run Classification
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <% if (classification) { %>
+
+   
+      <div class="card shadow-sm mb-4">
+
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">Classification Result</h5>
+
           <% if (classification.is_overridden) { %>
-            <span class="badge bg-warning text-dark">Manually Overridden</span>
+            <span class="badge bg-warning text-dark">Overridden</span>
           <% } else { %>
             <span class="badge bg-success">System Generated</span>
           <% } %>
         </div>
+
         <div class="card-body">
 
           <div class="row mb-3">
+
             <div class="col-md-3">
-              <p class="text-muted mb-1">Year 2 Average</p>
-              <p><%= classification.y2_average !== null ? classification.y2_average + '%' : '—' %></p>
+              <p class="text-muted mb-1">Year 2</p>
+              <p><%= classification.y2_average ?? '—' %>%</p>
             </div>
+
             <div class="col-md-3">
-              <p class="text-muted mb-1">Year 3 Average</p>
-              <p><%= classification.y3_average !== null ? classification.y3_average + '%' : '—' %></p>
+              <p class="text-muted mb-1">Year 3</p>
+              <p><%= classification.y3_average ?? '—' %>%</p>
             </div>
+
             <div class="col-md-3">
-              <p class="text-muted mb-1">Final Average</p>
-              <p><%= classification.final_average !== null ? classification.final_average + '%' : '—' %></p>
+              <p class="text-muted mb-1">Final</p>
+              <p><%= classification.final_average ?? '—' %>%</p>
             </div>
+
             <div class="col-md-3">
-              <p class="text-muted mb-1">Proposed Outcome</p>
+              <p class="text-muted mb-1">Proposed</p>
               <p><strong><%= classification.proposed_outcome %></strong></p>
             </div>
+
           </div>
 
-          <div class="row mb-3">
-            <div class="col-md-3">
+          <div class="row">
+
+            <div class="col-md-6">
               <p class="text-muted mb-1">Final Outcome</p>
-              <% if (classification.final_outcome === 'First Class Honours') { %>
-                <span class="badge bg-success"><%= classification.final_outcome %></span>
-              <% } else if (classification.final_outcome === 'Upper Second Class (2:1)') { %>
-                <span class="badge bg-primary"><%= classification.final_outcome %></span>
-              <% } else if (classification.final_outcome === 'Lower Second Class (2:2)') { %>
-                <span class="badge bg-info"><%= classification.final_outcome %></span>
-              <% } else if (classification.final_outcome === 'Third Class Honours') { %>
-                <span class="badge bg-warning text-dark"><%= classification.final_outcome %></span>
-              <% } else { %>
-                <span class="badge bg-danger"><%= classification.final_outcome %></span>
-              <% } %>
+              <p><strong><%= classification.final_outcome %></strong></p>
             </div>
-            <div class="col-md-3">
-              <p class="text-muted mb-1">Classified At</p>
+
+            <div class="col-md-6">
+              <p class="text-muted mb-1">Date</p>
               <p>
-                <% if (classification.classified_at) { %>
-                  <%= new Date(classification.classified_at).toLocaleDateString('en-GB') %>
-                <% } else { %>
-                  —
-                <% } %>
+                <%= classification.classified_at
+                  ? new Date(classification.classified_at).toLocaleDateString('en-GB')
+                  : '—' %>
               </p>
             </div>
+
           </div>
 
           <% if (classification.rationale) { %>
-            <div class="row">
-              <div class="col-md-12">
-                <p class="text-muted mb-1">Rationale</p>
-                <p><%= classification.rationale %></p>
-              </div>
-            </div>
+            <hr>
+            <p class="text-muted mb-1">Rationale</p>
+            <p><%= classification.rationale %></p>
           <% } %>
 
         </div>
+
       </div>
 
-      <%# Override Classification %>
-      <div class="card mb-4">
+  
+      <div class="card shadow-sm mb-4">
+
         <div class="card-header bg-white">
           <h5 class="mb-0">Override Classification</h5>
         </div>
+
         <div class="card-body">
-          <p class="text-muted">Use this to manually override the system classification. A rationale must be provided.</p>
+
           <form action="/academic/classificationOverride/<%= student.id %>" method="POST">
-            <div class="form-group mb-3">
-              <label for="final_outcome">Final Outcome</label>
-              <select class="form-control" id="final_outcome" name="final_outcome" required>
-                <option value="">Select outcome</option>
-                <option value="First Class Honours" <%= classification.final_outcome === 'First Class Honours' ? 'selected' : '' %>>First Class Honours</option>
-                <option value="Upper Second Class (2:1)" <%= classification.final_outcome === 'Upper Second Class (2:1)' ? 'selected' : '' %>>Upper Second Class (2:1)</option>
-                <option value="Lower Second Class (2:2)" <%= classification.final_outcome === 'Lower Second Class (2:2)' ? 'selected' : '' %>>Lower Second Class (2:2)</option>
-                <option value="Third Class Honours" <%= classification.final_outcome === 'Third Class Honours' ? 'selected' : '' %>>Third Class Honours</option>
-                <option value="Fail" <%= classification.final_outcome === 'Fail' ? 'selected' : '' %>>Fail</option>
-                <option value="Not Eligible" <%= classification.final_outcome === 'Not Eligible' ? 'selected' : '' %>>Not Eligible</option>
+
+            <div class="mb-3">
+              <label class="form-label">Final Outcome</label>
+
+              <select name="final_outcome" class="form-control" required>
+                <option value="">Select</option>
+                <option>First Class Honours</option>
+                <option>Upper Second Class (2:1)</option>
+                <option>Lower Second Class (2:2)</option>
+                <option>Third Class Honours</option>
+                <option>Fail</option>
+                <option>Not Eligible</option>
               </select>
+
             </div>
-            <div class="form-group mb-3">
-              <label for="rationale">Rationale</label>
-              <textarea
-                class="form-control"
-                id="rationale"
-                name="rationale"
-                rows="4"
-                required
-                placeholder="Please provide a reason for overriding the classification..."><%= classification.rationale || '' %></textarea>
+
+            <div class="mb-3">
+              <label class="form-label">Rationale</label>
+              <textarea name="rationale" class="form-control" rows="4" required></textarea>
             </div>
-            <button type="submit" class="btn btn-warning"
-              onclick="return confirm('Are you sure you want to override this classification?')">
-              Override Classification
+
+            <button type="submit"
+              class="btn btn-warning"
+              onclick="return confirm('Override classification?')">
+              Override
             </button>
+
           </form>
+
         </div>
+
       </div>
 
-      <%# Flag Student %>
-      <div class="card mb-4">
+      <!-- FLAG -->
+      <div class="card shadow-sm">
+
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
           <h5 class="mb-0">Flag Student</h5>
+
           <% if (classification.is_flagged) { %>
-            <span class="badge bg-danger">Flagged for Review</span>
+            <span class="badge bg-danger">Flagged</span>
           <% } %>
         </div>
+
         <div class="card-body">
-          <p class="text-muted">Would you like to flag this student for a manual review?</p>
+
           <form action="/academic/flagStudent/<%= student.id %>" method="POST">
-            <div class="mb-3 form-check">
-              <input
-                type="checkbox"
-                class="form-check-input"
-                id="is_flagged"
-                name="is_flagged"
-                value="on"
-                <%= classification.is_flagged ? 'checked' : '' %> />
-              <label class="form-check-label" for="is_flagged">Flag Student for Review</label>
+
+            <div class="form-check mb-3">
+              <input type="checkbox"
+                     class="form-check-input"
+                     name="is_flagged"
+                     <%= classification.is_flagged ? 'checked' : '' %>>
+              <label class="form-check-label">Flag for review</label>
             </div>
-            <div class="form-group mb-3">
-              <label for="flag_reason">Reason</label>
-              <textarea
-                class="form-control"
-                id="flag_reason"
-                name="flag_reason"
-                rows="4"
-                placeholder="Please provide a reason for flagging this student..."><%= classification.flag_reason || '' %></textarea>
+
+            <div class="mb-3">
+              <label class="form-label">Reason</label>
+              <textarea name="flag_reason" class="form-control" rows="3"></textarea>
             </div>
-            <button type="submit" class="btn btn-warning"
-              onclick="return confirm('Are you sure you want to update the flag status for this student?')">
+
+            <button type="submit"
+              class="btn btn-warning"
+              onclick="return confirm('Update flag status?')">
               Save
             </button>
+
           </form>
+
         </div>
+
       </div>
 
-    <% } else { %>
-      <div class="alert alert-info">
-        No classification has been run for this student yet. Click "Run Classification" above to generate one.
-      </div>
-    <% } %>
+      <% } else { %>
 
-    <div class="mt-4">
-      <a href="/academic/studentProfile/<%= student.id %>" class="btn btn-secondary">
-        Back to Student Profile
-      </a>
+        <div class="alert alert-info">
+          No classification available. Run classification to begin.
+        </div>
+
+      <% } %>
+
     </div>
 
   </div>
+</div>
+
+<div class="container mt-5 mb-5">
+  <div class="d-flex justify-content-end">
+      <a href="/academic/studentProfile/<%= student.id %>"
+             class="btn btn-sm dashboardButton">
+            Back to Student Profile
+          </a>
+
+          </div>
+          </div>
+
+
+
+<div class="pageSpacing"></div>
+</body>
+</html>
 
 </body>
 </html>

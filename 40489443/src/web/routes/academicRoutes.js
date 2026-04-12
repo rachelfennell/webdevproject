@@ -176,5 +176,20 @@ router.get(
   academicController.getAuditPage
 );
 
+//Create Student Page
+router.get(
+  '/academic/createStudent',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.getAddStudentPage
+);
+
+router.post(
+  '/academic/createStudent',
+  isAuthenticated,
+  isAcademicAdmin,
+  academicController.postAddStudent
+);
+
 
 export default router;
