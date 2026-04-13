@@ -58,7 +58,7 @@ const AuditLog = sequelize.define('AuditLog', {
 }, {
   tableName: 'audit_log',
   timestamps: false,
-indexes: [{ fields: ['table_name'] }, { fields: ['record_id'] }, { fields: ['changed_by'] }]
+  indexes: [{ fields: ['table_name'] }, { fields: ['record_id'] }, { fields: ['changed_by'] }]
 });
 
 export default AuditLog;

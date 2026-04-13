@@ -35,15 +35,15 @@ export const postLogin = async (req, res) => {
     };
 
     //Checks what role user is to display correct dashboard
-if (user.role === 'institutional_admin') {
-  return res.redirect('/institutional/dashboard');
-}
+    if (user.role === 'institutional_admin') {
+      return res.redirect('/institutional/dashboard');
+    }
 
-if (user.role === 'academic_admin') {
-  return res.redirect('/academic/dashboard');
-}
-  
-  
+    if (user.role === 'academic_admin') {
+      return res.redirect('/academic/dashboard');
+    }
+
+
   } catch (err) {
     console.error(err);
     res.render('login', { error: 'Something went wrong, please try again' });

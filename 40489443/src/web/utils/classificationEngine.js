@@ -3,12 +3,12 @@
 const getOverallMark = (moduleId, results, resitCap) => {
   const original = results.find(r => r.module_id === moduleId && r.is_resit === false);
   const resit = results.find(r => r.module_id === moduleId && r.is_resit === true);
-  
+
   let moduleOverallMark = 0;
-  
+
   if (resit) moduleOverallMark = Math.min(resit.mark, resitCap);
   if (original && !resit) moduleOverallMark = original.mark;
-  
+
   return moduleOverallMark;
 };
 
@@ -84,13 +84,13 @@ export const classifyStudent = (results, programme) => {
   const y2Average = calculateYearAverage(y2Results, resit_cap);
   const y3Average = calculateYearAverage(y3Results, resit_cap);
 
-const finalAverage = Number(((y2Average * y2_weight) + (y3Average * y3_weight)).toFixed(2));
+  const finalAverage = Number(((y2Average * y2_weight) + (y3Average * y3_weight)).toFixed(2));
 
-return {
-  eligible: true,
-  y2_average: y2Average,
-  y3_average: y3Average,
-  final_average: finalAverage,
-  proposed_outcome: getClassificationLabel(finalAverage)
-};
+  return {
+    eligible: true,
+    y2_average: y2Average,
+    y3_average: y3Average,
+    final_average: finalAverage,
+    proposed_outcome: getClassificationLabel(finalAverage)
+  };
 };

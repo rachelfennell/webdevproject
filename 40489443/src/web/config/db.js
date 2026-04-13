@@ -12,7 +12,7 @@ import { Sequelize } from 'sequelize';
 // Sequelize connection using URI
 const sequelize = new Sequelize('mysql://root:@localhost:3306/40489443', {
   logging: false, //don't want to see queries in console
-    dialectOptions: {
+  dialectOptions: {
     decimalNumbers: true //Dont need to parse floats of anything
   }
 });
@@ -20,7 +20,7 @@ const sequelize = new Sequelize('mysql://root:@localhost:3306/40489443', {
 // Test the connection
 (async () => {
   try {
-await sequelize.authenticate();
+    await sequelize.authenticate();
     console.log('Sequelize: Connection established successfully.');
     await sequelize.sync();
     console.log('All tables synced successfully.');

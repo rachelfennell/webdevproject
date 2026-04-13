@@ -1,52 +1,45 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Page for Institutional Administrator or Academic Administrator </title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/styles/ui.css">
+  <link rel="stylesheet" href="/styles/ui.css">
 </head>
 
-<body class = "loginBody">
+<body class="loginBody">
   <div class="loginPageBody">
-      <div class="col-md-4">
-        <div class="card shadow-sm">
-          <div class="card-body p-4">
-            <h2 class="text-center mb-4">Queens University</h2>
-            <h6 class="text-center text-muted mb-4">Student Programme Classification Platform</h6>
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4">Queens University</h2>
+          <h6 class="text-center text-muted mb-4">Student Programme Classification Platform</h6>
 
-            <% if (error) { %>
-              <div class="alert alert-primary text-center"><%= error %></div>
+          <% if (error) { %>
+            <div class="alert alert-primary text-center">
+              <%= error %>
+            </div>
             <% } %>
 
-            <form method="POST" action="/login">
-              <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input 
-                  type="text" 
-                  class="form-control" 
-                  id="username" 
-                  name="username" 
-                  required 
-                  autocomplete="username">
-              </div>
-              <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input 
-                  type="password" 
-                  class="form-control" 
-                  id="password" 
-                  name="password" 
-                  required 
-                  autocomplete="current-password">
-              </div>
-              <button type="submit" class="btn loginButton ">Login</button>
-            </form>
-          </div>
+              <form method="POST" action="/login">
+                <div class="mb-3">
+                  <label for="username" class="form-label">Username</label>
+                  <input type="text" class="form-control" id="username" name="username" required
+                    autocomplete="username">
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" required
+                    autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn loginButton ">Login</button>
+              </form>
+        </div>
       </div>
     </div>
   </div>
 </body>
+
 </html>

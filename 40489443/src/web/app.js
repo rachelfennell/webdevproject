@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/authRoutes.js';
 import institutionalRoutes from './routes/institutionalRoutes.js';
 import academicRoutes from './routes/academicRoutes.js';
+import rateLimit from 'express-rate-limit';
 
 // DB Models
 import '../seeder/models/index.js';
@@ -31,8 +32,17 @@ app.use(session({
   secret: 'webdev-secret',
   resave: false,
   saveUninitialized: false,
-  cookie : { maxAge : 600000 }
+  cookie: { maxAge: 600000 } //10 minutes of inactivity
 }));
+
+// Rate Limiter on login routes
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,    // 15 minutes 
+  max: 10, // max 5 attempts per window
+  message: 'Too many login attempts, please try again in 15 minutes'
+});
+
+app.use('/login', loginLimiter);
 
 // Routes — must be after session
 app.use('/', authRoutes);

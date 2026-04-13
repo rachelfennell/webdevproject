@@ -36,9 +36,9 @@ export const viewAllAdminsPage = async (req, res) => {
   try {
     //Find all academic admins from users db
     const admins = await User.findAll({
-  where: { role: 'academic_admin' },
-  order: [['first_name', 'ASC']]
-});
+      where: { role: 'academic_admin' },
+      order: [['first_name', 'ASC']]
+    });
     res.render('institutional/viewAdmins', { user: req.session.user, admins });
   } catch (err) {
     console.error(err);
@@ -90,14 +90,14 @@ export const getEditAdminPage = async (req, res) => {
       return res.render('error', { message: 'Admin not found' });
     }
 
-     const activeProgrammes = await Programme.findAll({
+    const activeProgrammes = await Programme.findAll({
       where: { active: true },
       include: {
         model: User,
-        where: { id: {[Op.ne]: adminId} }, //Search and exclude for programmes that don't have adminId
-required: false
+        where: { id: { [Op.ne]: adminId } }, //Search and exclude for programmes that don't have adminId
+        required: false
       }
-      
+
     });
 
     res.render('institutional/editAdmin', {
@@ -123,21 +123,21 @@ export const postAdminPage = async (req, res) => {
       return res.render('error', { message: 'Admin not found' });
     }
 
-// Check if admin has any active assigned programmes
-if(active!= 'on'){
-const assignedProgrammes = await UserProgramme.findOne({
-  where: {
-    user_id: adminId,
-    active: true
-  }
-});
+    // Check if admin has any active assigned programmes
+    if (active != 'on') {
+      const assignedProgrammes = await UserProgramme.findOne({
+        where: {
+          user_id: adminId,
+          active: true
+        }
+      });
 
-if (assignedProgrammes) {
-  return res.render('error', {
-    message: 'This admin cannot be deactivated as they have active programmes assigned. Please unassign all programmes first.'
-  });
-}
-}
+      if (assignedProgrammes) {
+        return res.render('error', {
+          message: 'This admin cannot be deactivated as they have active programmes assigned. Please unassign all programmes first.'
+        });
+      }
+    }
 
     admin.username = username;
     admin.email = email;
@@ -162,17 +162,17 @@ export const assignProgramme = async (req, res) => {
     const adminId = req.params.id;
     const { programmeId } = req.body;
 
-const admin = await User.findByPk(adminId);
- if (!admin) {
+    const admin = await User.findByPk(adminId);
+    if (!admin) {
       return res.status(404).render('error', { message: 'Admin not found.' });
     }
 
     const programme = await Programme.findByPk(programmeId);
- if (!programme) {
+    if (!programme) {
       return res.status(404).render('error', { message: 'Programme not found.' });
     }
 
-   // Check if programme is already assigned to another active user
+    // Check if programme is already assigned to another active user
     const existingAssignment = await UserProgramme.findOne({
       where: {
         programme_id: programmeId,
@@ -182,11 +182,12 @@ const admin = await User.findByPk(adminId);
     });
 
     if (existingAssignment) {
-      return res.render('error', { 
-    message: `This programme is already assigned to ${existingAssignment.User.first_name} ${existingAssignment.User.last_name} (${existingAssignment.User.username})` });
+      return res.render('error', {
+        message: `This programme is already assigned to ${existingAssignment.User.first_name} ${existingAssignment.User.last_name} (${existingAssignment.User.username})`
+      });
     }
 
-const existingUserAssignment = await UserProgramme.findOne({
+    const existingUserAssignment = await UserProgramme.findOne({
       where: {
         programme_id: programmeId,
         user_id: adminId,
@@ -194,7 +195,7 @@ const existingUserAssignment = await UserProgramme.findOne({
       }
     });
 
-  if (existingUserAssignment) {
+    if (existingUserAssignment) {
       return res.render('error', { message: 'This programme is already assigned to this officer.' });
     }
 
@@ -255,14 +256,14 @@ export const removeProgramme = async (req, res) => {
     });
 
     if (activeStudents) {
-      return res.render('error', { 
-        message: 'This programme cannot be unassigned as it has active students enrolled. Please deactivate all students first.' 
+      return res.render('error', {
+        message: 'This programme cannot be unassigned as it has active students enrolled. Please deactivate all students first.'
       });
     }
 
-   userProgramme.active = false;
-userProgramme.unassigned_date = new Date();
-await userProgramme.save();
+    userProgramme.active = false;
+    userProgramme.unassigned_date = new Date();
+    await userProgramme.save();
 
     res.redirect(`/institutional/adminProfile/${adminId}`);
   } catch (err) {
@@ -304,10 +305,10 @@ export const postCreateAdminPage = async (req, res) => {
 
     res.redirect('/institutional/manageAdmins');
 
-} catch (err) {
+  } catch (err) {
     console.error(err);
 
-let errorMessage = 'Something went wrong';
+    let errorMessage = 'Something went wrong';
 
     if (err.name === 'SequelizeValidationError') {
       errorMessage = err.errors[0].message;
@@ -341,9 +342,9 @@ export const manageProgrammes = async (req, res) => {
 export const viewProgrammes = async (req, res) => {
   try {
     const programmes = await Programme.findAll(
- {
-  order: [['programme_code', 'ASC']]
-  });
+      {
+        order: [['programme_code', 'ASC']]
+      });
 
 
     res.render('institutional/viewProgrammes', { user: req.session.user, programmes });
@@ -406,14 +407,14 @@ export const getEditProgrammePage = async (req, res) => {
 
     if (!programme) return res.render('error', { message: 'Programme not found' });
 
-const activeModules = await Module.findAll({
-  where : {active: true},
-  include: {
-    model: Programme,
-    where: {id: {[Op.ne]: programmeId}},
-    required: false
-  }
-})
+    const activeModules = await Module.findAll({
+      where: { active: true },
+      include: {
+        model: Programme,
+        where: { id: { [Op.ne]: programmeId } },
+        required: false
+      }
+    })
 
     res.render('institutional/editProgramme', {
       user: req.session.user,
@@ -443,7 +444,7 @@ export const postEditProgrammePage = async (req, res) => {
       }
     });
 
-if (existingCode) {
+    if (existingCode) {
       return res.render('error', { message: 'This programme code is already in use by another programme' });
     }
 
@@ -571,7 +572,7 @@ export const removeModule = async (req, res) => {
 // Create New Programme Page
 export const getCreateProgrammePage = async (req, res) => {
   try {
-    res.render('institutional/createProgramme', { user: req.session.user,error: null });
+    res.render('institutional/createProgramme', { user: req.session.user, error: null });
 
   } catch (err) {
     console.error(err);
@@ -615,9 +616,9 @@ export const postCreateProgrammePage = async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    
 
-let errorMessage = 'Something went wrong';
+
+    let errorMessage = 'Something went wrong';
 
     if (err.name === 'SequelizeValidationError') {
       errorMessage = err.errors[0].message;

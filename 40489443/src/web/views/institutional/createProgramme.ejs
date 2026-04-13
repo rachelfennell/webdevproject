@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Institutional Admin Dashboard | HEdClass</title>
+  <title>Create Programme Page</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="/styles/ui.css">
 </head>
@@ -13,142 +14,126 @@
   <nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
 
     <%# Top row %>
-    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
-      <a class="navbar-brand mb-0" href="/institutional/dashboard">
-        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
-      </a>
-      <span class="text-white">Logged in as <%= user.first_name %> <%= user.last_name %></span>
-    </div>
+      <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+        <a class="navbar-brand mb-0" href="/institutional/dashboard">
+          <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+        </a>
+        <span class="text-white">Logged in as <%= user.first_name %>
+            <%= user.last_name %></span>
+      </div>
 
-    <%# Bottom row %>
-    <div class="w-100 py-2 d-flex justify-content-end">
-      <ul class="navbar-nav flex-row gap-3">
-        <li class="nav-item">
-          <a class="nav-link" href="/institutional/dashboard">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
-        </li>
-        <li class="nav-item">
-          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
-        </li>
-      </ul>
-    </div>
+      <%# Bottom row %>
+        <div class="w-100 py-2 d-flex justify-content-end">
+          <ul class="navbar-nav flex-row gap-3">
+            <li class="nav-item">
+              <a class="nav-link" href="/institutional/dashboard">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
+            </li>
+            <li class="nav-item">
+              <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </li>
+          </ul>
+        </div>
 
   </nav>
 
   <div class="container mt-5">
-  <div class="row justify-content-center">
+    <div class="row justify-content-center">
 
-    <div class="col-12 col-lg-6">
+      <div class="col-12 col-lg-6">
 
-      <div class="card shadow-sm p-4">
+        <div class="card shadow-sm p-4">
 
-        <h4 class="mb-3">Create New Programme</h4>
+          <h4 class="mb-3">Create New Programme</h4>
 
-        <% if (error) { %>
-          <div class="alert alert-danger text-center">
-            <%= error %>
-          </div>
-        <% } %>
+          <% if (error) { %>
+            <div class="alert alert-danger text-center">
+              <%= error %>
+            </div>
+            <% } %>
 
-        <form action="/institutional/createProgramme" method="POST">
+              <form action="/institutional/createProgramme" method="POST">
 
-          <div class="mb-3">
-            <label class="form-label">Programme Name</label>
-            <input type="text" name="name" class="form-control" required>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Programme Name</label>
+                  <input type="text" name="name" class="form-control" required>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Programme Code</label>
-            <input type="text" name="programme_code" class="form-control"
-              placeholder="HE000000" required>
-            <div class="form-text">Must be in format HE000000</div>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Programme Code</label>
+                  <input type="text" name="programme_code" class="form-control" placeholder="HE000000" required>
+                  <div class="form-text">Must be in format HE000000</div>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Degree Type</label>
-            <select name="degree_type" class="form-control" required>
-              <option value="">Select degree type</option>
-              <option value="BSc">BSc</option>
-              <option value="BA">BA</option>
-              <option value="LLB">LLB</option>
-              <option value="BEng">BEng</option>
-            </select>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Degree Type</label>
+                  <select name="degree_type" class="form-control" required>
+                    <option value="">Select degree type</option>
+                    <option value="BSc">BSc</option>
+                    <option value="BA">BA</option>
+                    <option value="LLB">LLB</option>
+                    <option value="BEng">BEng</option>
+                  </select>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">School</label>
-            <select name="school" class="form-control" required>
-              <option value="">Select school</option>
-              <option value="EEECS">EEECS</option>
-              <option value="Law">Law</option>
-              <option value="Arts">Arts</option>
-            </select>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">School</label>
+                  <select name="school" class="form-control" required>
+                    <option value="">Select school</option>
+                    <option value="EEECS">EEECS</option>
+                    <option value="Law">Law</option>
+                    <option value="Arts">Arts</option>
+                  </select>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Year 2 Weight</label>
-            <input type="number" step="0.01" name="y2_weight" class="form-control"
-              min="0" max="1" placeholder="e.g. 0.30" required>
-            <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Year 2 Weight</label>
+                  <input type="number" step="0.01" name="y2_weight" class="form-control" min="0" max="1"
+                    placeholder="e.g. 0.30" required>
+                  <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Year 3 Weight</label>
-            <input type="number" step="0.01" name="y3_weight" class="form-control"
-              min="0" max="1" placeholder="e.g. 0.70" required>
-               <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Year 3 Weight</label>
+                  <input type="number" step="0.01" name="y3_weight" class="form-control" min="0" max="1"
+                    placeholder="e.g. 0.70" required>
+                  <div class="form-text">Must be between 0 and 1. Year 2 and Year 3 weights must sum to 1.0</div>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Resit Cap</label>
-            <input type="number" name="resit_cap" class="form-control"
-              min="0" max="100" value="40" required>
-            <div class="form-text">Maximum mark a resit can contribute (0-100)</div>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Resit Cap</label>
+                  <input type="number" name="resit_cap" class="form-control" min="0" max="100" value="40" required>
+                  <div class="form-text">Maximum mark a resit can contribute (0-100)</div>
+                </div>
 
-          <div class="mb-3">
-            <label class="form-label">Pass Mark</label>
-            <input type="number" name="pass_mark" class="form-control"
-              min="0" max="100" value="40" required>
-            <div class="form-text">Minimum mark required to pass a module (0-100)</div>
-          </div>
+                <div class="mb-3">
+                  <label class="form-label">Pass Mark</label>
+                  <input type="number" name="pass_mark" class="form-control" min="0" max="100" value="40" required>
+                  <div class="form-text">Minimum mark required to pass a module (0-100)</div>
+                </div>
 
-          <div class="d-flex justify-content-between mt-4">
-            <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn dashboardButton">Create Programme</button>
-          </div>
+                <div class="d-flex justify-content-between mt-4">
+                  <a href="/institutional/manageProgrammes" class="btn btn-secondary">Cancel</a>
+                  <button type="submit" class="btn dashboardButton">Create Programme</button>
+                </div>
 
-        </form>
+              </form>
 
+        </div>
       </div>
+
     </div>
-
   </div>
-</div>
 
 
-
-
-
-
-
-
-
-
-
-
-<div class="pageSpacing"></div>
+  <div class="pageSpacing"></div>
 
 
 </body>
+
 </html>
-
-
-
-
-

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,197 +12,205 @@
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
 
-  <!-- Top row -->
-  <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
-    <a class="navbar-brand mb-0" href="/institutional/dashboard">
-      <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
-    </a>
-    <span class="text-white">
-      Logged in as <%= user.first_name %> <%= user.last_name %>
-    </span>
-  </div>
-
-  <!-- Bottom row -->
-  <div class="w-100 py-2 d-flex justify-content-end">
-    <ul class="navbar-nav flex-row gap-3">
-      <li class="nav-item">
-        <a class="nav-link" href="/institutional/dashboard">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
-      </li>
-      <li class="nav-item">
-        <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
-      </li>
-    </ul>
-  </div>
-
-</nav>
-
-
-
-<div class="container mt-5">
-  <div class="row g-4">
-
-    
-    <div class="col-12 col-lg-4">
-
-      <div class="card shadow-sm p-3">
-
-        <div class="d-flex justify-content-between align-items-center">
-          <h4 class="mb-0">Admin Profile</h4>
-
-          <a href="/institutional/editAdmin/<%= admin.id %>"
-             class="btn btn-sm dashboardButton">
-            Edit
-          </a>
-        </div>
-
-        <hr>
-
-        <p>
-          <strong>Name:</strong>
-          <%= admin.first_name %> <%= admin.last_name %>
-        </p>
-
-        <p>
-          <strong>Username:</strong> <%= admin.username %>
-        </p>
-
-        <p>
-          <strong>Email:</strong> <%= admin.email %>
-        </p>
-
-        <p>
-          <strong>Profile:</strong>
-          <%= admin.active ? 'Active' : 'Inactive' %>
-        </p>
-
-      </div>
+    <!-- Top row -->
+    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+      <a class="navbar-brand mb-0" href="/institutional/dashboard">
+        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+      </a>
+      <span class="text-white">
+        Logged in as <%= user.first_name %>
+          <%= user.last_name %>
+      </span>
     </div>
 
+    <!-- Bottom row -->
+    <div class="w-100 py-2 d-flex justify-content-end">
+      <ul class="navbar-nav flex-row gap-3">
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/dashboard">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/manageAdmins">Admin Management</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/institutional/manageProgrammes">Programme Management</a>
+        </li>
+        <li class="nav-item">
+          <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        </li>
+      </ul>
+    </div>
 
-   
-    <div class="col-12 col-lg-8">
+  </nav>
 
-     
-      <div class="card shadow-sm mb-4">
 
-        <div class="card-header bg-white">
-          <h5 class="mb-0">Currently Assigned Programmes</h5>
+
+  <div class="container mt-5">
+    <div class="row g-4">
+
+
+      <div class="col-12 col-lg-4">
+
+        <div class="card shadow-sm p-3">
+
+          <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Admin Profile</h4>
+
+            <a href="/institutional/editAdmin/<%= admin.id %>" class="btn btn-sm dashboardButton">
+              Edit
+            </a>
+          </div>
+
+          <hr>
+
+          <p>
+            <strong>Name:</strong>
+            <%= admin.first_name %>
+              <%= admin.last_name %>
+          </p>
+
+          <p>
+            <strong>Username:</strong>
+            <%= admin.username %>
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            <%= admin.email %>
+          </p>
+
+          <p>
+            <strong>Profile:</strong>
+            <%= admin.active ? 'Active' : 'Inactive' %>
+          </p>
+
         </div>
+      </div>
 
-        <div class="card-body table-responsive">
 
-          <% if (admin.Programmes && admin.Programmes.length > 0) { %>
 
-            <table class="table align-middle">
-              <thead>
-                <tr>
-                  <th>Programme Code</th>
-                  <th>Programme Name</th>
-                  <th>Assigned Date</th>
-                </tr>
-              </thead>
+      <div class="col-12 col-lg-8">
 
-              <tbody>
-                <% admin.Programmes.forEach(programme => { %>
-                  <% if (programme.UserProgramme.active) { %>
-                    <tr>
-                      <td><%= programme.programme_code %></td>
-                      <td><%= programme.name .split(' ')
+
+        <div class="card shadow-sm mb-4">
+
+          <div class="card-header bg-white">
+            <h5 class="mb-0">Currently Assigned Programmes</h5>
+          </div>
+
+          <div class="card-body table-responsive">
+
+            <% if (admin.Programmes && admin.Programmes.length> 0) { %>
+
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Programme Code</th>
+                    <th>Programme Name</th>
+                    <th>Assigned Date</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% admin.Programmes.forEach(programme=> { %>
+                    <% if (programme.UserProgramme.active) { %>
+                      <tr>
+                        <td>
+                          <%= programme.programme_code %>
+                        </td>
+                        <td>
+                          <%= programme.name .split(' ')
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ')
 %></td>
                       <td>
-                        <%= new Date(programme.UserProgramme.assigned_date)
-                          .toLocaleDateString('en-GB') %>
-                      </td>
-                    </tr>
-                  <% } %>
-                <% }) %>
-              </tbody>
-            </table>
+                        <%= new Date(programme.UserProgramme.assigned_date).toLocaleDateString('en-GB') %>
+                        </td>
+                      </tr>
+                      <% } %>
+                        <% }) %>
+                </tbody>
+              </table>
 
-          <% } else { %>
-            <p>No programmes assigned.</p>
-          <% } %>
+              <% } else { %>
+                <p>No programmes assigned.</p>
+                <% } %>
 
-        </div>
-      </div>
-
-
-     
-      <div class="card shadow-sm">
-
-        <div class="card-header bg-white">
-          <h5 class="mb-0">Previously Assigned Programmes</h5>
+          </div>
         </div>
 
-        <div class="card-body table-responsive">
 
-          <% if (admin.Programmes && admin.Programmes.length > 0) { %>
 
-            <table class="table align-middle">
-              <thead>
-                <tr>
-                  <th>Programme Code</th>
-                  <th>Programme Name</th>
-                  <th>Unassigned Date</th>
-                </tr>
-              </thead>
+        <div class="card shadow-sm">
 
-              <tbody>
-                <% admin.Programmes.forEach(programme => { %>
-                  <% if (!programme.UserProgramme.active) { %>
-                    <tr>
-                      <td><%= programme.programme_code %></td>
-                      <td><%= programme.name .split(' ')
+          <div class="card-header bg-white">
+            <h5 class="mb-0">Previously Assigned Programmes</h5>
+          </div>
+
+          <div class="card-body table-responsive">
+
+            <% if (admin.Programmes && admin.Programmes.length> 0) { %>
+
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Programme Code</th>
+                    <th>Programme Name</th>
+                    <th>Unassigned Date</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% admin.Programmes.forEach(programme=> { %>
+                    <% if (!programme.UserProgramme.active) { %>
+                      <tr>
+                        <td>
+                          <%= programme.programme_code %>
+                        </td>
+                        <td>
+                          <%= programme.name .split(' ')
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ')
 %></td>
                   <td>
             <% if (programme.UserProgramme.unassigned_date) { %>
               <%= new Date(programme.UserProgramme.unassigned_date).toLocaleDateString('en-GB') %>
-            <% } else { %>
-              —
-            <% } %>
-          </td>
-                    </tr>
-                  <% } %>
-                <% }) %>
-              </tbody>
-            </table>
+                            <% } else { %>
+                              —
+                              <% } %>
+                        </td>
+                      </tr>
+                      <% } %>
+                        <% }) %>
+                </tbody>
+              </table>
 
-          <% } else { %>
-            <p>No unassigned programmes.</p>
-          <% } %>
+              <% } else { %>
+                <p>No unassigned programmes.</p>
+                <% } %>
 
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
-</div>
 
 
 
-<div class="container mt-5 mb-5">
-  <div class="d-flex justify-content-end">
-    <a href="/institutional/viewAdmins"
-       class="btn btn-sm dashboardButton">
-      Back to Admin List
-    </a>
+  <div class="container mt-5 mb-5">
+    <div class="d-flex justify-content-end">
+      <a href="/institutional/viewAdmins" class="btn btn-sm dashboardButton">
+        Back to Admin List
+      </a>
+    </div>
   </div>
-</div>
 
-<div class="pageSpacing"></div>
+  <div class="pageSpacing"></div>
 
 </body>
+
 </html>

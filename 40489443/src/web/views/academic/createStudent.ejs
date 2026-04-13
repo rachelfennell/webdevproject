@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,34 +10,36 @@
   <link rel="stylesheet" href="/styles/ui.css">
 </head>
 
-<body><nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
- <%# Top row %>
-    <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
-      <a class="navbar-brand mb-0" href="/academic/dashboard">
-        <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
-      </a>
-      <span class="text-white">Logged in as <%= user.first_name %> <%= user.last_name %></span>
-    </div>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark px-4 py-0">
+    <%# Top row %>
+      <div class="w-100 d-flex justify-content-between align-items-center py-2 border-bottom border-secondary">
+        <a class="navbar-brand mb-0" href="/academic/dashboard">
+          <img src="/media/Logo_white.png" alt="QueensLogo" height="40">
+        </a>
+        <span class="text-white">Logged in as <%= user.first_name %>
+            <%= user.last_name %></span>
+      </div>
 
-  <%# Bottom row %>
-  <div class="w-100 py-2 d-flex justify-content-end">
-      <ul class="navbar-nav flex-row gap-3">
-        <li class="nav-item">
-        <a class="nav-link" href="/academic/dashboard">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/academic/studentList">Students List</a>
-      </li>
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-    Assigned Programmes
-  </a>
-  <ul class="dropdown-menu">
-  <% if (userProgrammes && userProgrammes.length > 0) { %>
-    <% userProgrammes.forEach(userProgramme => { %>
-      <li>
-        <a class="dropdown-item" href="/academic/programmeDashboard/<%= userProgramme.Programme.id %>">
-          <%= userProgramme.Programme.name  .split(' ')
+      <%# Bottom row %>
+        <div class="w-100 py-2 d-flex justify-content-end">
+          <ul class="navbar-nav flex-row gap-3">
+            <li class="nav-item">
+              <a class="nav-link" href="/academic/dashboard">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/academic/studentList">Students List</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                Assigned Programmes
+              </a>
+              <ul class="dropdown-menu">
+                <% if (userProgrammes && userProgrammes.length> 0) { %>
+                  <% userProgrammes.forEach(userProgramme=> { %>
+                    <li>
+                      <a class="dropdown-item" href="/academic/programmeDashboard/<%= userProgramme.Programme.id %>">
+                        <%= userProgramme.Programme.name .split(' ')
   .map(word => word.charAt(0).toUpperCase() + word.slice(1))
   .join(' ')
 %>

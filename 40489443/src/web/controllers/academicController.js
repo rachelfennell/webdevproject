@@ -16,17 +16,18 @@ const getOverallMark = (moduleId, results, resitCap) => {
 
 // Main Dashboard
 export const dashboard = async (req, res) => {
-  try { 
-  const userId = req.session.user.id;
+  try {
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
- res.render('academic/dashboard', {
+    res.render('academic/dashboard', {
       user: req.session.user,
       programmes: userProgrammes,
       userProgrammes,
@@ -46,7 +47,7 @@ export const studentList = async (req, res) => {
     const userId = req.session.user.id;
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
-      attributes: ['programme_id'], 
+      attributes: ['programme_id'],
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
@@ -83,7 +84,7 @@ export const studentList = async (req, res) => {
       assignedStudents,
       unassignedStudents,
       message: allStudents.length === 0 ? 'No students are currently enrolled.' : null,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -98,14 +99,15 @@ export const studentList = async (req, res) => {
 // View Student PRofile PAge
 export const viewStudentProfile = async (req, res) => {
   try {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school'],
-      } });
+      }
+    });
 
 
 
@@ -113,14 +115,15 @@ export const viewStudentProfile = async (req, res) => {
 
     const student = await Student.findByPk(studentId, {
       include: [
-        { 
-          model: Programme, 
-          attributes: ['name', 'programme_code', 'degree_type', 'school'] ,
+        {
+          model: Programme,
+          attributes: ['name', 'programme_code', 'degree_type', 'school'],
           include: {
-        model: Module,
-        through: {
-          attributes: ['credits', 'year_level', 'mandatory', 'active']
-        } }
+            model: Module,
+            through: {
+              attributes: ['credits', 'year_level', 'mandatory', 'active']
+            }
+          }
         },
         {
           model: Result,
@@ -133,10 +136,10 @@ export const viewStudentProfile = async (req, res) => {
       ]
     });
 
-student.Results.forEach(r => {
-  const pm = student.Programme.Modules.find(m => m.id === r.module_id);
-  r.Module.credits = pm ? pm.ProgrammeModule.credits : 0;
-});
+    student.Results.forEach(r => {
+      const pm = student.Programme.Modules.find(m => m.id === r.module_id);
+      r.Module.credits = pm ? pm.ProgrammeModule.credits : 0;
+    });
 
 
     if (!student) return res.render('error', { message: 'Student not found' });
@@ -144,7 +147,7 @@ student.Results.forEach(r => {
     res.render('academic/studentProfile', {
       user: req.session.user,
       student,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -185,7 +188,7 @@ export const getEditStudentPage = async (req, res) => {
       user: req.session.user,
       student,
       programmes: userProgrammes,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -222,7 +225,7 @@ export const postEditStudentPage = async (req, res) => {
     return res.redirect(`/academic/studentProfile/${studentId}`);
 
   } catch (err) {
-       console.error(err);
+    console.error(err);
 
     let errorMessage = 'Something went wrong';
 
@@ -239,14 +242,15 @@ export const postEditStudentPage = async (req, res) => {
 // Deactivate A Student Profile
 export const deactivateStudent = async (req, res) => {
   try {
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     const studentId = req.params.id;
 
@@ -292,14 +296,15 @@ export const reactivateStudent = async (req, res) => {
 export const programmeDashboard = async (req, res) => {
   try {
 
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     const programmeId = req.params.id;
 
@@ -316,20 +321,20 @@ export const programmeDashboard = async (req, res) => {
       return res.render('error', { message: 'Programme not found' });
     }
 
-   const students = await Student.findAll({
-  where: { programme_id: programmeId, active_student: true },
-  include: [
-    { model: Result },
-    { model: Classification }
-  ]
-});
+    const students = await Student.findAll({
+      where: { programme_id: programmeId, active_student: true },
+      include: [
+        { model: Result },
+        { model: Classification }
+      ]
+    });
 
     res.render('academic/programmeDashboard', {
       user: req.session.user,
       programme,
       students,
       getOverallMark,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -351,7 +356,8 @@ export const getEditProgrammePage = async (req, res) => {
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     const programmeId = req.params.id;
 
@@ -586,14 +592,15 @@ export const removeModule = async (req, res) => {
 // View All Students Assigned to a Programme
 export const programmeStudentList = async (req, res) => {
   try {
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
     const programmeId = req.params.id;
 
     const programme = await Programme.findByPk(programmeId);
@@ -612,7 +619,7 @@ export const programmeStudentList = async (req, res) => {
       programme,
       activeStudents,
       inactiveStudents,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -627,14 +634,15 @@ export const programmeStudentList = async (req, res) => {
 // View All Students Results for a Module
 export const viewModuleResults = async (req, res) => {
   try {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     const programmeId = req.params.programmeId;
     const moduleId = req.params.moduleId;
@@ -654,7 +662,7 @@ export const viewModuleResults = async (req, res) => {
       order: [['last_name', 'ASC']]
     });
 
-    
+
     const originalResults = await Result.findAll({
       where: { module_id: moduleId, is_resit: false }
     });
@@ -672,7 +680,7 @@ export const viewModuleResults = async (req, res) => {
       originalResults,
       resitResults,
       getOverallMark,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -687,14 +695,15 @@ export const viewModuleResults = async (req, res) => {
 // Add/Edit Students Results for a Module Page
 export const getEditResultsPage = async (req, res) => {
   try {
-  const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     const studentId = req.params.id;
 
@@ -713,17 +722,17 @@ export const getEditResultsPage = async (req, res) => {
       where: { student_id: studentId }
     });
 
-res.render('academic/editResults', {
-  user: req.session.user,
-  student,
-  programmeModules,
-  results,
-  from: req.query.from || `/academic/studentProfile/${studentId}`,
-   userProgrammes,
+    res.render('academic/editResults', {
+      user: req.session.user,
+      student,
+      programmeModules,
+      results,
+      from: req.query.from || `/academic/studentProfile/${studentId}`,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
-});
+    });
 
   } catch (err) {
     console.error(err);
@@ -788,14 +797,15 @@ export const postEditResultsPage = async (req, res) => {
 // Students Degree Classification Page
 export const getClassificationPage = async (req, res) => {
   try {
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
     const studentId = req.params.id;
 
     const student = await Student.findByPk(studentId, {
@@ -824,7 +834,7 @@ export const getClassificationPage = async (req, res) => {
       user: req.session.user,
       student,
       classification: student.Classification || null,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -863,7 +873,7 @@ export const postClassificationPage = async (req, res) => {
     });
 
     const result = classifyStudent(student.Results, student.Programme);
-const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
+    const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
 
     const classification = await Classification.findOne({ where: { student_id: studentId } });
 
@@ -882,11 +892,11 @@ const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
       classification.overridden_by = null;
       classification.overridden_at = null;
       classification.is_flagged = autoFlag;
-classification.flag_reason = autoFlag
-  ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
-  : null;
-classification.flagged_by = autoFlag ? req.session.user.id : null;
-classification.flagged_at = autoFlag ? new Date() : null;
+      classification.flag_reason = autoFlag
+        ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
+        : null;
+      classification.flagged_by = autoFlag ? req.session.user.id : null;
+      classification.flagged_at = autoFlag ? new Date() : null;
       await classification.save();
     } else {
       await Classification.create({
@@ -903,9 +913,9 @@ classification.flagged_at = autoFlag ? new Date() : null;
         overridden_by: null,
         overridden_at: null,
         is_flagged: autoFlag,
-    flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
-    flagged_by: autoFlag ? req.session.user.id : null,
-    flagged_at: autoFlag ? new Date() : null
+        flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
+        flagged_by: autoFlag ? req.session.user.id : null,
+        flagged_at: autoFlag ? new Date() : null
       });
     }
 
@@ -929,7 +939,7 @@ export const postOverrideClassification = async (req, res) => {
 
     if (!classification) return res.render('error', { message: 'No classification found for this student' });
 
-const autoFlag = final_outcome === 'Fail' || final_outcome === 'Not Eligible';
+    const autoFlag = final_outcome === 'Fail' || final_outcome === 'Not Eligible';
 
     classification.final_outcome = final_outcome;
     classification.rationale = rationale;
@@ -937,11 +947,11 @@ const autoFlag = final_outcome === 'Fail' || final_outcome === 'Not Eligible';
     classification.overridden_by = req.session.user.id;
     classification.overridden_at = new Date();
     classification.is_flagged = autoFlag;
-classification.flag_reason = autoFlag
-  ? `Automatically flagged: ${final_outcome}`
-  : null;
-classification.flagged_by = autoFlag ? req.session.user.id : null;
-classification.flagged_at = autoFlag ? new Date() : null;
+    classification.flag_reason = autoFlag
+      ? `Automatically flagged: ${final_outcome}`
+      : null;
+    classification.flagged_by = autoFlag ? req.session.user.id : null;
+    classification.flagged_at = autoFlag ? new Date() : null;
 
     await classification.save();
 
@@ -983,14 +993,15 @@ export const postFlagStudentReview = async (req, res) => {
 // Programme Classification Page
 export const getProgrammeClassificationPage = async (req, res) => {
   try {
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
     const programmeId = req.params.id;
 
     const programme = await Programme.findByPk(programmeId);
@@ -1023,7 +1034,7 @@ export const getProgrammeClassificationPage = async (req, res) => {
       user: req.session.user,
       programme,
       students,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -1067,7 +1078,7 @@ export const postProgrammeClassification = async (req, res) => {
       const classification = await Classification.findOne({
         where: { student_id: student.id }
       });
-const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
+      const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
       if (classification) {
         classification.y2_average = result.eligible ? result.y2_average : null;
         classification.y3_average = result.eligible ? result.y3_average : null;
@@ -1081,12 +1092,12 @@ const autoFlag = !result.eligible || result.proposed_outcome === 'Fail';
         classification.overridden_by = null;
         classification.overridden_at = null;
         classification.is_flagged = autoFlag;
-classification.flag_reason = autoFlag
-  ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
-  : null;
-classification.flagged_by = autoFlag ? req.session.user.id : null;
-classification.flagged_at = autoFlag ? new Date() : null;
-  await classification.save();
+        classification.flag_reason = autoFlag
+          ? `Automatically flagged: ${!result.eligible ? result.reason : 'Fail'}`
+          : null;
+        classification.flagged_by = autoFlag ? req.session.user.id : null;
+        classification.flagged_at = autoFlag ? new Date() : null;
+        await classification.save();
       } else {
         await Classification.create({
           student_id: student.id,
@@ -1102,9 +1113,9 @@ classification.flagged_at = autoFlag ? new Date() : null;
           overridden_by: null,
           overridden_at: null,
           is_flagged: autoFlag,
-    flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
-    flagged_by: autoFlag ? req.session.user.id : null,
-    flagged_at: autoFlag ? new Date() : null
+          flag_reason: autoFlag ? 'Automatically flagged: ' + (result.eligible ? 'Fail' : 'Not Eligible') : null,
+          flagged_by: autoFlag ? req.session.user.id : null,
+          flagged_at: autoFlag ? new Date() : null
         });
       }
     }
@@ -1120,15 +1131,16 @@ classification.flagged_at = autoFlag ? new Date() : null;
 // Audit Log Page
 export const getAuditPage = async (req, res) => {
   try {
-      const userId = req.session.user.id;
+    const userId = req.session.user.id;
 
     const userProgrammes = await UserProgramme.findAll({
       where: { user_id: userId, active: true },
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
-   
+      }
+    });
+
 
     const classifications = await Classification.findAll({
       where: {
@@ -1163,7 +1175,7 @@ export const getAuditPage = async (req, res) => {
     res.render('academic/auditLog', {
       user: req.session.user,
       classifications,
-       userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -1186,13 +1198,14 @@ export const getAddStudentPage = async (req, res) => {
       include: {
         model: Programme,
         attributes: ['id', 'name', 'programme_code', 'degree_type', 'school']
-      } });
+      }
+    });
 
     res.render('academic/createStudent', {
       user: req.session.user,
       programmes: userProgrammes,
       error: null,
-        userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
@@ -1209,7 +1222,7 @@ export const postAddStudent = async (req, res) => {
 
   try {
     const existing = await Student.findOne({ where: { student_number } });
-    
+
     if (existing) {
       const userId = req.session.user.id;
       const userProgrammes = await UserProgramme.findAll({
@@ -1221,10 +1234,10 @@ export const postAddStudent = async (req, res) => {
 
       return res.status(400).render('academic/createStudent', {
         user: req.session.user,
-          userProgrammes,
-      message: userProgrammes.length === 0
-        ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
-        : null,
+        userProgrammes,
+        message: userProgrammes.length === 0
+          ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
+          : null,
         programmes: userProgrammes,
         error: 'A student with this student number already exists'
       });
@@ -1268,7 +1281,7 @@ export const postAddStudent = async (req, res) => {
       user: req.session.user,
       programmes: userProgrammes,
       error: errorMessage,
-        userProgrammes,
+      userProgrammes,
       message: userProgrammes.length === 0
         ? 'You are not currently assigned to any programmes. Please contact your institutional administrator.'
         : null
