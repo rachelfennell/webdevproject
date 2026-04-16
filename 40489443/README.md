@@ -2,7 +2,7 @@ Assignment for module CSC7062 Web development at Queen's University Belfast
 
 - This README is for CSC7062: Web Development Assignment.
 - It is an grade classification web application designed for the above module.
--The web app does not contain the node_modules folder.
+
 
 ***How to install & run the project***
 
