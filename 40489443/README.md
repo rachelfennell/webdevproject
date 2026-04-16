@@ -11,7 +11,7 @@ Prerequisites: Node.js and MySQL
 Run all of these commands in the terminal:
 
 1. Clone the repository: 
-- git clone https://gitlab.eeecs.qub.ac.uk/40489443/hedclass.git
+- git clone (repo HTML)
 
 2. Install dependencies:
 - npm install (this will pull every dependency listed in package.json)
@@ -19,13 +19,9 @@ or
 - npm install axios bcrypt ejs express express-rate-limit express-session mysql2 sequelize
 
 3. Run this to create the database tables: 
-- cd C:\Users\rache\hedclass\40489443\src\web 
-then 
 - npx nodemon app.js
 
 4. Run the seeder file to populate the database tables: 
-- cd C:\Users\rache\hedclass\40489443\src\seeder 
-then 
 - node seed.js
 
 ***NOTE***
@@ -33,8 +29,6 @@ then
 - Please run the correct script below for each project.
 
 5. To start the web application:
-- cd C:\Users\rache\hedclass\40489443\src\web 
-then 
 - npx nodemon app.js
 - This runs on port 3000
 
@@ -43,8 +37,6 @@ Web Application URL:	http://localhost:3000
 OR
 
 5. To start the API: 
-- cd C:\Users\rache\hedclass\40489443\src\web 
-then 
 - node api/server.js
 - This runs on port 4000
 
